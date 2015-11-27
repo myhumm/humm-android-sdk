@@ -614,7 +614,7 @@ public class PlaylistsAPI extends HummAPI {
 
 
     public void addSubscriber(final String idPlaylist, final OnActionFinishedListener listener) {
-        new HummTask<HummSingleResult<Playlist>>(new HummTask.Job() {
+        new HummTask<HummSingleResult<PlaylistOwnerList>>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
                 return addSubscriber(idPlaylist);
@@ -632,12 +632,12 @@ public class PlaylistsAPI extends HummAPI {
         });
     }
 
-    public HummSingleResult<Playlist> addSubscriber(final String idPlaylist) {
+    public HummSingleResult<PlaylistOwnerList> addSubscriber(final String idPlaylist) {
 
-        HummSingleResult<Playlist> result = new HummSingleResult<>();
+        HummSingleResult<PlaylistOwnerList> result = new HummSingleResult<>();
         try {
 
-            Type listType = new TypeToken<HummSingleResult<Playlist>>() {
+            Type listType = new TypeToken<HummSingleResult<PlaylistOwnerList>>() {
             }.getType();
 
 
@@ -675,7 +675,7 @@ public class PlaylistsAPI extends HummAPI {
     }
 
     public void removeSubscriber(final String idPlaylist, final OnActionFinishedListener listener) {
-        new HummTask<HummSingleResult<Playlist>>(new HummTask.Job() {
+        new HummTask<HummSingleResult<PlaylistOwnerList>>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
                 return removeSubscriber(idPlaylist);
@@ -693,12 +693,12 @@ public class PlaylistsAPI extends HummAPI {
         });
     }
 
-    public HummSingleResult<Playlist> removeSubscriber(final String idPlaylist) {
+    public HummSingleResult<PlaylistOwnerList> removeSubscriber(final String idPlaylist) {
 
-        HummSingleResult<Playlist> result = new HummSingleResult<>();
+        HummSingleResult<PlaylistOwnerList> result = new HummSingleResult<>();
         try {
 
-            Type listType = new TypeToken<HummSingleResult<Playlist>>() {
+            Type listType = new TypeToken<HummSingleResult<PlaylistOwnerList>>() {
             }.getType();
 
 

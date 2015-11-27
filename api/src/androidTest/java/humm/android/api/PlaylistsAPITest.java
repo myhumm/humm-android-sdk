@@ -421,4 +421,71 @@ public class PlaylistsAPITest extends InstrumentationTestCase {
         }
     }
 
+    public void testAddSubscriber() throws Throwable {
+
+        final CountDownLatch signal = new CountDownLatch(1);
+
+        final HummAPI humm = HummAPI.getInstance();
+        humm.login("deleteme", "deleteme", new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                signal.countDown();
+
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+
+            }
+        });
+
+        //wait for login
+        signal.await(30, TimeUnit.SECONDS);
+
+        String idPlaylist = "563fdb0334017507dba11167";
+
+        HummSingleResult<PlaylistOwnerList> result = humm.getPlaylists().addSubscriber(idPlaylist);
+
+        if (result != null) {
+            assertEquals("ok", result.getStatus_response());
+//            assertEquals(5, result.getData_response().size());
+        } else {
+            assertNull(result); //no content
+        }
+    }
+    public void testRemoveSubscriber() throws Throwable {
+
+        final CountDownLatch signal = new CountDownLatch(1);
+
+        final HummAPI humm = HummAPI.getInstance();
+        humm.login("deleteme", "deleteme", new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                signal.countDown();
+
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+
+            }
+        });
+
+        //wait for login
+        signal.await(30, TimeUnit.SECONDS);
+
+        String idPlaylist = "563fdb0334017507dba11167";
+
+        HummSingleResult<PlaylistOwnerList> result = humm.getPlaylists().removeSubscriber(idPlaylist);
+
+        if (result != null) {
+            assertEquals("ok", result.getStatus_response());
+//            assertEquals(5, result.getData_response().size());
+        } else {
+            assertNull(result); //no content
+        }
+    }
+
 }
