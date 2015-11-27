@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
@@ -27,70 +28,65 @@ public class HttpURLConnectionHelper {
     public static Reader getHttpConnection(String host, JSONObject params, String auth_token) throws IOException, JSONException {
         HttpURLConnection conn = null;
         Reader reader = null;
-        if (params != null) {
-            Iterator<?> keys = params.keys();
-
-            String allGetParams = "";
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                String value = "";
-                if (params.get(key) instanceof String)
-                {
-                     value = (String) params.get(key);
-                }
-                else {
-                    value = Integer.valueOf((int)params.get(key)).toString();
-                }
-                String getParam = allGetParams.length() > 1 ? "&" + key + "=" + value : "?" + key + "=" + value;
-                allGetParams = allGetParams + getParam;
-            }
-
-            host = host + allGetParams;
-
-        }
+        host = host + getParams(params);
 
         URL url = new URL(host);
         conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
-        conn.setReadTimeout(5000);
+        conn.setReadTimeout(10000);
         conn.setDoInput(true);
         conn.setRequestProperty("Accept", "application/json");
         conn.setRequestProperty("Content-Type", "application/json");
+
         if (auth_token != null) {
             conn.setRequestProperty("Authorization", auth_token);
         }
 
-        Log.d("DEBUG", host);
+
         InputStream in = new BufferedInputStream(conn.getInputStream());
         reader = new InputStreamReader(in);
 
         return reader;
     }
 
-    public static Reader postHttpConnection(String host, JSONObject params, String auth_token) throws IOException, JSONException {
-        HttpURLConnection conn = null;
+    private static String getParams(JSONObject params) throws JSONException {
 
-        //        if (params != null) {
-//            DataOutputStream printout = new DataOutputStream(conn.getOutputStream());
-//            printout.write(params.toString().getBytes("UTF-8"));
-//            printout.flush();
-//            printout.close();
-//        }
-
-
+        String allGetParams = "";
         if (params != null) {
             Iterator<?> keys = params.keys();
 
-            String allGetParams = "?";
             while (keys.hasNext()) {
                 String key = (String) keys.next();
-                String value = (String) params.get(key);
-                String getParam = allGetParams.length() > 1 ? "&" + key + "=" + value : key + "=" + value;
+                String value = "";
+                if (params.get(key) instanceof String) {
+                    value = (String) params.get(key);
+                } else if (params.get(key) instanceof ArrayList) {
+                    ArrayList<String> paramsArray = new ArrayList<String>();
+
+                    String subvalue = "";
+                    for (String paramArray : paramsArray) {
+                        subvalue = subvalue + paramArray + ",";
+                    }
+                    value = subvalue;
+
+                } else if (params.get(key) instanceof Boolean) {
+                    Boolean bool = (Boolean) params.get(key);
+                    value = bool ? "true" : "false";
+                } else {
+                    value = Integer.valueOf((int) params.get(key)).toString();
+                }
+                String getParam = allGetParams.length() > 1 ? "&" + key + "=" + value : "?" + key + "=" + value;
                 allGetParams = allGetParams + getParam;
             }
 
-            host = host + allGetParams;
         }
+        return allGetParams;
+    }
+
+    public static Reader postHttpConnection(String host, JSONObject params, String auth_token) throws IOException, JSONException {
+        HttpURLConnection conn = null;
+
+        host = host + getParams(params);
         URL url = new URL(host);
 
         conn = (HttpURLConnection) url.openConnection();
@@ -116,20 +112,8 @@ public class HttpURLConnectionHelper {
     public static Reader putHttpConnection(String host, JSONObject params, boolean getParams, String auth_token) throws IOException, JSONException {
         HttpURLConnection conn = null;
 
-        if ((params != null) && (getParams)) {
-
-            Iterator<?> keys = params.keys();
-
-            String allGetParams = "?";
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                String value = (String) params.get(key);
-                String getParam = allGetParams.length() > 1 ? "&" + key + "=" + value : key + "=" + value;
-                allGetParams = allGetParams + getParam;
-            }
-
-//            Log.d("DEBUG", host);
-            host = host + allGetParams;
+        if (getParams) {
+            host = host + getParams(params);
         }
 
         URL url = new URL(host);
@@ -168,8 +152,12 @@ public class HttpURLConnectionHelper {
         return reader;
     }
 
-    public static Reader deleteHttpConnection(String host, String auth_token) throws IOException, JSONException {
+    public static Reader deleteHttpConnection(String host, JSONObject params, String auth_token) throws IOException, JSONException {
         HttpURLConnection conn = null;
+
+        host = host + getParams(params);
+
+        Log.d("DEBUG", host);
 
         URL url = new URL(host);
         conn = (HttpURLConnection) url.openConnection();

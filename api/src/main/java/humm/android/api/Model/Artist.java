@@ -16,7 +16,7 @@ public class Artist extends Humm {
     private HashMap<String, String> urls;
     private List<String> images;
     private List<String> following;
-    private HashMap<String, Integer> stats;
+    private HashMap<String, String> stats;
 
     public List<String> getMoods() {
         return moods;
@@ -67,11 +67,11 @@ public class Artist extends Humm {
         this.following = following;
     }
 
-    public HashMap<String, Integer> getStats() {
+    public HashMap<String, String> getStats() {
         return stats;
     }
 
-    public void setStats(HashMap<String, Integer> stats) {
+    public void setStats(HashMap<String, String> stats) {
         this.stats = stats;
     }
 
@@ -124,19 +124,19 @@ public class Artist extends Humm {
         return null;
     }
 
-    public int getPopularity() {
+    public String getPopularity() {
         if ((this.stats != null) && (this.stats.get("popularity") != null)) {
             return this.stats.get("popularity");
         }
 
-        return 0;
+        return null;
     }
 
-    public int getPlaylists() {
+    public String getPlaylists() {
         if ((this.stats != null) && (this.stats.get("playlists") != null)) {
             return this.stats.get("playlists");
         }
 
-        return 0;
+        return null;
     }
 }

@@ -212,7 +212,7 @@ public class ArtistAPI extends HummAPI {
 
             Type listType = new TypeToken<HummSingleResult<Artist>>() {
             }.getType();
-            Reader reader = HttpURLConnectionHelper.deleteHttpConnection(endpoint + "/artists/" + idArtist + "/followers", token);
+            Reader reader = HttpURLConnectionHelper.deleteHttpConnection(endpoint + "/artists/" + idArtist + "/followers", null, token);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {

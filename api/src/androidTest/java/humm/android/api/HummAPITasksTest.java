@@ -2,11 +2,15 @@ package humm.android.api;
 
 import android.test.InstrumentationTestCase;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import humm.android.api.Model.HummMultipleResult;
 import humm.android.api.Model.HummSingleResult;
 import humm.android.api.Model.LoginInfo;
+import humm.android.api.Model.Song;
 
 /**
  * Created by josealonsogarcia on 24/11/15.
@@ -126,5 +130,43 @@ public class HummAPITasksTest extends InstrumentationTestCase {
         assertTrue("ok", true);
 
     }
+
+    public void testRadio() throws Throwable {
+
+        final CountDownLatch signal = new CountDownLatch(1);
+
+        final HummAPI humm = HummAPI.getInstance();
+        humm.login("deleteme", "deleteme", new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+
+            }
+        });
+
+        //wait for login
+        signal.await(30, TimeUnit.SECONDS);
+
+        int limit = 10;
+        List<String> genres = new ArrayList<>();
+        List<String> moods = new ArrayList<>();
+        boolean discovery = false;
+        boolean own = false;
+
+        HummMultipleResult<Song> result = humm.getSongs().radio(limit, genres, moods, discovery, own);
+
+        if (result != null) {
+            assertEquals("ok", result.getStatus_response());
+            assertEquals(10, result.getData_response().size());
+        } else {
+            assertNull(result); //no content
+        }
+    }
+
 
 }
