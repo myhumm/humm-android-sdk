@@ -123,12 +123,12 @@ public class PlaylistsAPI extends HummAPI {
         });
     }
 
-    public HummSingleResult<Playlist> create(final String title, final String description, final boolean isPrivate) {
+    public HummSingleResult<PlaylistOwnerHashMap> create(final String title, final String description, final boolean isPrivate) {
 
-        HummSingleResult<Playlist> result = new HummSingleResult<>();
+        HummSingleResult<PlaylistOwnerHashMap> result = new HummSingleResult<>();
         try {
 
-            Type listType = new TypeToken<HummSingleResult<Playlist>>() {
+            Type listType = new TypeToken<HummSingleResult<PlaylistOwnerHashMap>>() {
             }.getType();
 
             JSONObject parameters = new JSONObject();
@@ -146,7 +146,7 @@ public class PlaylistsAPI extends HummAPI {
                 parameters.put("description", description);
             }
 
-            Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/playlists", parameters, token);
+            Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/playlists", parameters, true,  token);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
@@ -253,12 +253,12 @@ public class PlaylistsAPI extends HummAPI {
         });
     }
 
-    public HummSingleResult<Playlist> update(String idPlaylist, String title, String description, boolean isPrivate) {
+    public HummSingleResult<PlaylistOwnerHashMap> update(String idPlaylist, String title, String description, boolean isPrivate) {
 
-        HummSingleResult<Playlist> result = new HummSingleResult<>();
+        HummSingleResult<PlaylistOwnerHashMap> result = new HummSingleResult<>();
         try {
 
-            Type listType = new TypeToken<HummSingleResult<Playlist>>() {
+            Type listType = new TypeToken<HummSingleResult<PlaylistOwnerHashMap>>() {
             }.getType();
 
 
@@ -287,8 +287,7 @@ public class PlaylistsAPI extends HummAPI {
             parameters.put("description", description);
             parameters.put("private", isPrivate);
 
-
-            Reader reader = HttpURLConnectionHelper.putHttpConnection(endpoint + "/playlists/" + idPlaylist, parameters, true, token);
+            Reader reader = HttpURLConnectionHelper.patchHttpConnection(endpoint + "/playlists/" + idPlaylist, parameters, true, token);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
@@ -334,12 +333,12 @@ public class PlaylistsAPI extends HummAPI {
         });
     }
 
-    public HummSingleResult<Playlist> order(final String idPlaylist, final List<HashMap<String, String>> order) {
+    public HummMultipleResult<Song> order(final String idPlaylist, final List<HashMap<String, String>> songs) {
 
-        HummSingleResult<Playlist> result = new HummSingleResult<>();
+        HummMultipleResult<Song> result = new HummMultipleResult<>();
         try {
 
-            Type listType = new TypeToken<HummSingleResult<Playlist>>() {
+            Type listType = new TypeToken<HummMultipleResult<Song>>() {
             }.getType();
 
 
@@ -350,17 +349,17 @@ public class PlaylistsAPI extends HummAPI {
                 return result;
             }
 
-            if (order == null) {
+            if (songs == null) {
                 result.setStatus_response(HttpURLConnectionHelper.KO);
-                result.setError_response("order parameter is mandatory");
+                result.setError_response("songs parameter is mandatory");
 
                 return result;
             }
 
             JSONObject parameters = new JSONObject();
-            parameters.put("order", order);
+            parameters.put("songs", songs);
 
-            Reader reader = HttpURLConnectionHelper.putHttpConnection(endpoint + "/playlists/" + idPlaylist, parameters, false, token);
+            Reader reader = HttpURLConnectionHelper.patchHttpConnection(endpoint + "/playlists/" + idPlaylist + "/reorder", parameters, false, token);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
@@ -478,12 +477,12 @@ public class PlaylistsAPI extends HummAPI {
     }
 
     //no tested
-    public HummSingleResult<Playlist> addSong(final String idPlaylist, final String idSong, final int position) {
+    public HummSingleResult<PlaylistOwnerHashMap> addSong(final String idPlaylist, final String idSong, final int position) {
 
-        HummSingleResult<Playlist> result = new HummSingleResult<>();
+        HummSingleResult<PlaylistOwnerHashMap> result = new HummSingleResult<>();
         try {
 
-            Type listType = new TypeToken<HummSingleResult<Playlist>>() {
+            Type listType = new TypeToken<HummSingleResult<PlaylistOwnerHashMap>>() {
             }.getType();
 
 
@@ -513,7 +512,7 @@ public class PlaylistsAPI extends HummAPI {
             parameters.put("sid", idSong);
             parameters.put("position", position);
 
-            Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/playlists/" + idPlaylist + "/songs", parameters, token);
+            Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/playlists/" + idPlaylist + "/songs",  parameters, false, token);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
@@ -648,7 +647,7 @@ public class PlaylistsAPI extends HummAPI {
                 return result;
             }
 
-            Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/playlists/" + idPlaylist + "/subscribers", null, token);
+            Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/playlists/" + idPlaylist + "/subscribers",  null, true, token);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {

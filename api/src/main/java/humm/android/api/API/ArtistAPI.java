@@ -21,6 +21,7 @@ import humm.android.api.Model.Artist;
 import humm.android.api.Model.HummMultipleResult;
 import humm.android.api.Model.HummSingleResult;
 import humm.android.api.Model.Song;
+import humm.android.api.Model.User;
 import humm.android.api.OnActionFinishedListener;
 
 /**
@@ -95,6 +96,14 @@ public class ArtistAPI extends HummAPI {
         HummSingleResult<Artist> result = new HummSingleResult<>();
         try {
 
+            if (idArtist == null) {
+                result.setStatus_response(HttpURLConnectionHelper.KO);
+                result.setError_response("idArtist parameter is mandatory");
+
+                return result;
+            }
+
+
             HummAPI.getInstance().updateUserToken();
 
             JSONObject parameters = new JSONObject();
@@ -167,13 +176,20 @@ public class ArtistAPI extends HummAPI {
         HummSingleResult<Artist> result = new HummSingleResult<>();
         try {
 
+            if (idArtist == null) {
+                result.setStatus_response(HttpURLConnectionHelper.KO);
+                result.setError_response("idArtist parameter is mandatory");
+
+                return result;
+            }
+
+
             HummAPI.getInstance().updateUserToken();
 
 
             Type listType = new TypeToken<HummSingleResult<Artist>>() {
             }.getType();
-//            Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/users/" + idArtist + "/follow", null, token);
-            Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/artists/" + idArtist + "/followers", null, token);
+            Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/artists/" + idArtist + "/followers", null, true, token);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
@@ -203,14 +219,21 @@ public class ArtistAPI extends HummAPI {
 
     }
 
-    public HummSingleResult<Artist> removeFollowers(String idArtist) {
+    public HummSingleResult<User> removeFollowers(String idArtist) {
 
-        HummSingleResult<Artist> result = new HummSingleResult<>();
+        HummSingleResult<User> result = new HummSingleResult<>();
         try {
+
+            if (idArtist == null) {
+                result.setStatus_response(HttpURLConnectionHelper.KO);
+                result.setError_response("idArtist parameter is mandatory");
+
+                return result;
+            }
 
             HummAPI.getInstance().updateUserToken();
 
-            Type listType = new TypeToken<HummSingleResult<Artist>>() {
+            Type listType = new TypeToken<HummSingleResult<User>>() {
             }.getType();
             Reader reader = HttpURLConnectionHelper.deleteHttpConnection(endpoint + "/artists/" + idArtist + "/followers", null, token);
             result = new Gson().fromJson(reader, listType);
@@ -271,6 +294,14 @@ public class ArtistAPI extends HummAPI {
     public HummMultipleResult<Song> getPlaylists(String idArtist, int limit, int offset) {
         HummMultipleResult<Song> result = new HummMultipleResult<>();
         try {
+
+            if (idArtist == null) {
+                result.setStatus_response(HttpURLConnectionHelper.KO);
+                result.setError_response("idArtist parameter is mandatory");
+
+                return result;
+            }
+
 
             HummAPI.getInstance().updateUserToken();
 
@@ -343,6 +374,14 @@ public class ArtistAPI extends HummAPI {
         HummMultipleResult<Song> result = new HummMultipleResult<>();
         try {
 
+
+            if (idArtist == null) {
+                result.setStatus_response(HttpURLConnectionHelper.KO);
+                result.setError_response("idArtist parameter is mandatory");
+
+                return result;
+            }
+
             HummAPI.getInstance().updateUserToken();
 
             Type listType = new TypeToken<HummMultipleResult<Song>>() {
@@ -413,6 +452,13 @@ public class ArtistAPI extends HummAPI {
         HummMultipleResult<Artist> result = new HummMultipleResult<>();
         try {
 
+            if (idArtist == null) {
+                result.setStatus_response(HttpURLConnectionHelper.KO);
+                result.setError_response("idArtist parameter is mandatory");
+
+                return result;
+            }
+
             HummAPI.getInstance().updateUserToken();
 
             Type listType = new TypeToken<HummMultipleResult<Artist>>() {
@@ -479,12 +525,12 @@ public class ArtistAPI extends HummAPI {
         }).start();
     }
 
-    public void search(final String keyword, final OnActionFinishedListener listener) {
+    public void search(final String keyword,final int limit, final int offset, final OnActionFinishedListener listener) {
 
         new HummTask<HummMultipleResult<Artist>>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
-                return doSearch(keyword);
+                return doSearch(keyword, limit, offset);
             }
 
             @Override
@@ -506,17 +552,37 @@ public class ArtistAPI extends HummAPI {
 
     }
 
-    public HummMultipleResult<Artist> doSearch(String keyword) {
+    public HummMultipleResult<Artist> doSearch(String keyword, final int limit, final int offset) {
 
 
         HummMultipleResult<Artist> result = new HummMultipleResult<>();
         try {
 
+            if (keyword == null) {
+                result.setStatus_response(HttpURLConnectionHelper.KO);
+                result.setError_response("keyword parameter is mandatory");
+
+                return result;
+            }
+
+
             HummAPI.getInstance().updateUserToken();
+
+            JSONObject parameters = new JSONObject();
+            if (limit > 0) {
+                parameters.put("limit", limit);
+            }
+            if (offset > 0) {
+                parameters.put("offset", offset);
+            }
+            if (keyword != null) {
+                parameters.put("keyword", keyword);
+            }
+
 
             Type listType = new TypeToken<HummMultipleResult<Artist>>() {
             }.getType();
-            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists/search?keyword=" + Uri.encode(keyword), null, token);
+            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists", parameters, token);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
@@ -579,6 +645,13 @@ public class ArtistAPI extends HummAPI {
         HummMultipleResult<Song> result = new HummMultipleResult<>();
         try {
 
+            if (idArtist == null) {
+                result.setStatus_response(HttpURLConnectionHelper.KO);
+                result.setError_response("idArtist parameter is mandatory");
+
+                return result;
+            }
+
             HummAPI.getInstance().updateUserToken();
 
             Type listType = new TypeToken<HummMultipleResult<Song>>() {
@@ -622,7 +695,7 @@ public class ArtistAPI extends HummAPI {
 
     }
 
-    public HummMultipleResult<Artist> getFeatured(String idArtist, int limit, int offset, String genre) {
+    public HummMultipleResult<Artist> getFeatured(int limit, int offset, String genre) {
 
 
         HummMultipleResult<Artist> result = new HummMultipleResult<>();
@@ -671,12 +744,12 @@ public class ArtistAPI extends HummAPI {
 
     }
 
-    public void getFeatured(final String idArtist, final int limit, final int offset, final String genre, final OnActionFinishedListener listener) {
+    public void getFeatured( final int limit, final int offset, final String genre, final OnActionFinishedListener listener) {
 
         new HummTask<HummMultipleResult<Artist>>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
-                return getFeatured(idArtist, limit, offset, genre);
+                return getFeatured( limit, offset, genre);
             }
 
             @Override

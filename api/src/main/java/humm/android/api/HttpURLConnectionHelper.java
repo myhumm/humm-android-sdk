@@ -1,15 +1,20 @@
 package humm.android.api;
 
+import android.net.Uri;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -35,8 +40,8 @@ public class HttpURLConnectionHelper {
         conn.setRequestMethod("GET");
         conn.setReadTimeout(10000);
         conn.setDoInput(true);
-        conn.setRequestProperty("Accept", "application/json");
-        conn.setRequestProperty("Content-Type", "application/json");
+//        conn.setRequestProperty("Accept", "application/json");
+//        conn.setRequestProperty("Content-Type", "application/json");
 
         if (auth_token != null) {
             conn.setRequestProperty("Authorization", auth_token);
@@ -61,7 +66,7 @@ public class HttpURLConnectionHelper {
                 if (params.get(key) instanceof String) {
                     value = (String) params.get(key);
                 } else if (params.get(key) instanceof ArrayList) {
-                    ArrayList<String> paramsArray = new ArrayList<String>();
+                    ArrayList<String> paramsArray = (ArrayList<String>) params.get(key);
 
                     String subvalue = "";
                     for (String paramArray : paramsArray) {
@@ -75,6 +80,7 @@ public class HttpURLConnectionHelper {
                 } else {
                     value = Integer.valueOf((int) params.get(key)).toString();
                 }
+                value = Uri.encode(value);
                 String getParam = allGetParams.length() > 1 ? "&" + key + "=" + value : "?" + key + "=" + value;
                 allGetParams = allGetParams + getParam;
             }
@@ -83,10 +89,12 @@ public class HttpURLConnectionHelper {
         return allGetParams;
     }
 
-    public static Reader postHttpConnection(String host, JSONObject params, String auth_token) throws IOException, JSONException {
+    public static Reader postHttpConnection(String host, JSONObject params, boolean getParams, String auth_token) throws IOException, JSONException {
         HttpURLConnection conn = null;
 
-        host = host + getParams(params);
+        if (getParams) {
+            host = host + getParams(params);
+        }
         URL url = new URL(host);
 
         conn = (HttpURLConnection) url.openConnection();
@@ -96,14 +104,25 @@ public class HttpURLConnectionHelper {
         conn.setRequestMethod("POST");
         conn.setDoInput(true);
         conn.setDoOutput(true);
+        conn.setChunkedStreamingMode(0); // Use default chunk size
 
 //        conn.setRequestProperty("Accept", "application/json");
-//        conn.setRequestProperty("Content-Type", "application/json");
+//        conn.setRequestProperty("Content-Type", "x-www-form-urlencoded");
         if (auth_token != null) {
             conn.setRequestProperty("Authorization", auth_token);
         }
 
+        if (!getParams) {
+            OutputStream out = new BufferedOutputStream(conn.getOutputStream());
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+            writer.write(params.toString());
+            writer.close();
+            out.close();
+        }
+
+
         InputStream in = new BufferedInputStream(conn.getInputStream());
+
         Reader reader = new InputStreamReader(in);
 
         return reader;
@@ -135,12 +154,12 @@ public class HttpURLConnectionHelper {
         }
 
         if (!getParams) {
-            String str = params.toString();
-            byte[] data = str.getBytes("UTF-8");
-            DataOutputStream printout = new DataOutputStream(conn.getOutputStream());
-            printout.write(data);
-            printout.flush();
-            printout.close();
+            OutputStream out = new BufferedOutputStream(conn.getOutputStream());
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+            writer.write(params.toString());
+            writer.close();
+            out.close();
+
         }
 
 //        conn.setRequestProperty("Accept", "application/json");
@@ -152,12 +171,54 @@ public class HttpURLConnectionHelper {
         return reader;
     }
 
+    public static Reader patchHttpConnection(String host, JSONObject params, boolean getParams, String auth_token) throws IOException, JSONException {
+        HttpURLConnection conn = null;
+
+        if (getParams) {
+            host = host + getParams(params);
+        }
+
+        URL url = new URL(host);
+
+        conn = (HttpURLConnection) url.openConnection();
+
+        conn.setReadTimeout(5000);
+//        conn.setConnectTimeout(10000);
+        conn.setRequestMethod("PATCH");
+        conn.setDoInput(true);
+        conn.setDoOutput(true);
+
+        if (!getParams) {
+            conn.setRequestProperty("Content-Type", "application/json");
+        }
+
+        if (auth_token != null) {
+            conn.setRequestProperty("Authorization", auth_token);
+        }
+
+        if (!getParams) {
+            OutputStream out = new BufferedOutputStream(conn.getOutputStream());
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+            writer.write(params.toString());
+            writer.close();
+            out.close();
+
+        }
+
+//        conn.setRequestProperty("Accept", "application/json");
+//        conn.setRequestProperty("Content-Type", "application/json");
+
+        InputStream in = new BufferedInputStream(conn.getInputStream());
+        Reader reader = new InputStreamReader(in);
+
+        return reader;
+    }
+
+
     public static Reader deleteHttpConnection(String host, JSONObject params, String auth_token) throws IOException, JSONException {
         HttpURLConnection conn = null;
 
         host = host + getParams(params);
-
-        Log.d("DEBUG", host);
 
         URL url = new URL(host);
         conn = (HttpURLConnection) url.openConnection();

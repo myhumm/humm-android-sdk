@@ -23,30 +23,12 @@ import humm.android.api.Model.Song;
 /**
  * Created by josealonsogarcia on 26/11/15.
  */
-public class SongsAPITest extends InstrumentationTestCase {
+public class SongsAPITest extends HummTest {
 
     public void testGet() throws Throwable {
 
-        final CountDownLatch signal = new CountDownLatch(1);
-
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme", new OnActionFinishedListener() {
-            @Override
-            public void actionFinished(Object result) {
-                signal.countDown();
-
-            }
-
-            @Override
-            public void onError(Exception e) {
-                assertTrue(false);
-
-            }
-        });
-
-        //wait for login
-        signal.await(30, TimeUnit.SECONDS);
-
+        doLogin();
         String idSong = "5649c572ae8c502824a46a99";
 
         HummSingleResult<Song> result = humm.getSongs().get(idSong);
@@ -64,26 +46,8 @@ public class SongsAPITest extends InstrumentationTestCase {
 
     public void testGetFeatured() throws Throwable {
 
-        final CountDownLatch signal = new CountDownLatch(1);
-
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme", new OnActionFinishedListener() {
-            @Override
-            public void actionFinished(Object result) {
-                signal.countDown();
-
-            }
-
-            @Override
-            public void onError(Exception e) {
-                assertTrue(false);
-
-            }
-        });
-
-        //wait for login
-        signal.await(30, TimeUnit.SECONDS);
-
+        doLogin();
         int limit = 0;
         int offset = 0;
         String genre = null;
@@ -99,26 +63,8 @@ public class SongsAPITest extends InstrumentationTestCase {
 
     public void testPopular() throws Throwable {
 
-        final CountDownLatch signal = new CountDownLatch(1);
-
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme", new OnActionFinishedListener() {
-            @Override
-            public void actionFinished(Object result) {
-                signal.countDown();
-
-            }
-
-            @Override
-            public void onError(Exception e) {
-                assertTrue(false);
-
-            }
-        });
-
-        //wait for login
-        signal.await(30, TimeUnit.SECONDS);
-
+        doLogin();
         int limit = 10;
         int offset = 0;
         String genre = null;
@@ -136,26 +82,8 @@ public class SongsAPITest extends InstrumentationTestCase {
 
     public void testRecent() throws Throwable {
 
-        final CountDownLatch signal = new CountDownLatch(1);
-
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme", new OnActionFinishedListener() {
-            @Override
-            public void actionFinished(Object result) {
-                signal.countDown();
-
-            }
-
-            @Override
-            public void onError(Exception e) {
-                assertTrue(false);
-
-            }
-        });
-
-        //wait for login
-        signal.await(30, TimeUnit.SECONDS);
-
+        doLogin();
         int limit = 10;
         int offset = 0;
         String genre = null;
@@ -172,27 +100,9 @@ public class SongsAPITest extends InstrumentationTestCase {
 
     public void testSearch() throws Throwable {
 
-        final CountDownLatch signal = new CountDownLatch(1);
-
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme", new OnActionFinishedListener() {
-            @Override
-            public void actionFinished(Object result) {
-                signal.countDown();
-
-            }
-
-            @Override
-            public void onError(Exception e) {
-                assertTrue(false);
-
-            }
-        });
-
-        //wait for login
-        signal.await(30, TimeUnit.SECONDS);
-
-        String keyword = "heroes";
+        doLogin();
+        String keyword = "song";
         int limit = 10;
         int offset = 0;
         String songtype = null;
@@ -210,26 +120,8 @@ public class SongsAPITest extends InstrumentationTestCase {
 
     public void testAppearsIn() throws Throwable {
 
-        final CountDownLatch signal = new CountDownLatch(1);
-
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme", new OnActionFinishedListener() {
-            @Override
-            public void actionFinished(Object result) {
-                signal.countDown();
-
-            }
-
-            @Override
-            public void onError(Exception e) {
-                assertTrue(false);
-
-            }
-        });
-
-        //wait for login
-        signal.await(30, TimeUnit.SECONDS);
-
+        doLogin();
         String idSong = "557ecbf86a64fc1b8bed533f"; //song2
         int limit = 0;
 
@@ -245,26 +137,8 @@ public class SongsAPITest extends InstrumentationTestCase {
 
     public void testGetSimilar() throws Throwable {
 
-        final CountDownLatch signal = new CountDownLatch(1);
-
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme", new OnActionFinishedListener() {
-            @Override
-            public void actionFinished(Object result) {
-                signal.countDown();
-
-            }
-
-            @Override
-            public void onError(Exception e) {
-                assertTrue(false);
-
-            }
-        });
-
-        //wait for login
-        signal.await(30, TimeUnit.SECONDS);
-
+        doLogin();
         String idSong = "557ecbf86a64fc1b8bed533f"; //song2
         int offset = 0;
 
@@ -277,42 +151,5 @@ public class SongsAPITest extends InstrumentationTestCase {
             assertNull(result); //no content
         }
     }
-
-//    public void testStaffPicks() throws Throwable {
-//
-//        final CountDownLatch signal = new CountDownLatch(1);
-//
-//        final HummAPI humm = HummAPI.getInstance();
-//        humm.login("deleteme", "deleteme", new OnActionFinishedListener() {
-//            @Override
-//            public void actionFinished(Object result) {
-//                signal.countDown();
-//
-//            }
-//
-//            @Override
-//            public void onError(Exception e) {
-//                assertTrue(false);
-//
-//            }
-//        });
-//
-//        //wait for login
-//        signal.await(30, TimeUnit.SECONDS);
-//
-//        int offset = 0;
-//        int limit = 0;
-//        String genre = null;
-//
-//        HummMultipleResult<Song> result = humm.getSongs().getStaffPicks(limit, offset, genre);
-//
-//        if (result != null) {
-//            assertEquals("ok", result.getStatus_response());
-////            assertEquals(10, result.getData_response().size());
-//        } else {
-//            assertNull(result); //no content
-//        }
-//    }
-
 
 }

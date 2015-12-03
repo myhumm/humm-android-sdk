@@ -14,7 +14,7 @@ public class Artist extends Humm {
     private List<HashMap> similar;
     private HashMap account;
     private HashMap<String, String> urls;
-    private List<String> images;
+//    private List<String> images;
     private List<String> following;
     private HashMap<String, String> stats;
 
@@ -51,13 +51,13 @@ public class Artist extends Humm {
         this.urls = urls;
     }
 
-    public List<String> getImages() {
-        return images;
-    }
-
-    public void setImages(List<String> images) {
-        this.images = images;
-    }
+//    public List<String> getImages() {
+//        return images;
+//    }
+//
+//    public void setImages(List<String> images) {
+//        this.images = images;
+//    }
 
     public List<String> getFollowing() {
         return following;

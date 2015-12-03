@@ -69,7 +69,6 @@ public class HummAPI {
                     return;
                 }
 
-                Log.d("DEBUG", token);
                 updateLoginData(login.getData_response());
 
             }
@@ -92,7 +91,7 @@ public class HummAPI {
             public void actionFinished(Object result) {
                 HummSingleResult<LoginInfo> login = (HummSingleResult<LoginInfo>) result;
                 if (login == null || login.getData_response() == null || login.getData_response().getAccess_token() == null) {
-                    return;
+                    listener.onError(new HummException("login failed"));
                 }
 
                 updateLoginData(login.getData_response());

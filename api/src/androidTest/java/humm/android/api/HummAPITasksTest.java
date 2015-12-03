@@ -83,8 +83,8 @@ public class HummAPITasksTest extends InstrumentationTestCase {
      */
         final HummAPI humm = HummAPI.getInstance();
 
-        final String username = "deleteme10";
-        final String password = "deleteme10";
+        final String username = "deleteme11";
+        final String password = "deleteme11";
         final String email = "deleteme@delete.com";
         final String firstname = "delete";
         final String lastname = "me";

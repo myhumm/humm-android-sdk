@@ -1,6 +1,7 @@
 package humm.android.api;
 
 import android.test.InstrumentationTestCase;
+import android.util.Log;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -9,21 +10,26 @@ import humm.android.api.Model.Artist;
 import humm.android.api.Model.HummMultipleResult;
 import humm.android.api.Model.HummSingleResult;
 import humm.android.api.Model.Song;
+import humm.android.api.Model.User;
 
 /**
  * Created by josealonsogarcia on 23/11/15.
  */
 
-//TODO call login with callback
-public class ArtistAPITest extends InstrumentationTestCase {
+public class ArtistAPITest extends HummTest {
 
 
     public void testSearch() throws Throwable {
 
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme");
 
-        HummMultipleResult<Artist> result = humm.getArtist().doSearch("beck");
+        doLogin();
+
+        String keyword = "Beck";
+        int limit = 0;
+        int offset = 0;
+
+        HummMultipleResult<Artist> result = humm.getArtist().doSearch(keyword, limit, offset);
 
         assertEquals("ok", result.getStatus_response());
 
@@ -40,7 +46,7 @@ public class ArtistAPITest extends InstrumentationTestCase {
      *
      */
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme");
+        doLogin();
 
         HummMultipleResult<Artist> result;
         // Execute the async task on the UI thread! THIS IS KEY!
@@ -50,11 +56,15 @@ public class ArtistAPITest extends InstrumentationTestCase {
             public void run() {
 //                myTask.execute("Do something");
 
+                final String keyword = "Beck";
+                final int limit = 0;
+                final int offset = 0;
+
 
                 new HummTask<HummMultipleResult<Artist>>(new HummTask.Job() {
                     @Override
                     public Object onStart() throws Exception {
-                        return humm.getArtist().doSearch("beck");
+                        return humm.getArtist().doSearch(keyword, limit, offset);
                     }
 
                     @Override
@@ -89,7 +99,7 @@ public class ArtistAPITest extends InstrumentationTestCase {
     public void testTopSongs() throws Throwable {
 
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme");
+        doLogin();
 
         final String idArtist = "55116991f9c816a0d639ea75";
         final int limit = 10;
@@ -113,7 +123,7 @@ public class ArtistAPITest extends InstrumentationTestCase {
      *
      */
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme");
+        doLogin();
 
         final String idArtist = "55116991f9c816a0d639ea75";
         final int limit = 20;
@@ -167,7 +177,7 @@ public class ArtistAPITest extends InstrumentationTestCase {
     public void testGet() throws Throwable {
 
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme");
+        doLogin();
 
         final String idArtist = "55116991f9c816a0d639ea75";
         final int limit = 0;
@@ -180,8 +190,8 @@ public class ArtistAPITest extends InstrumentationTestCase {
         Artist artist = result.getData_response();
         assertEquals("Blur", artist.getName());
         assertEquals("#Blur", artist.getHashtag());
-        assertEquals(434882, artist.getPopularity());
-        assertEquals(77, artist.getPlaylists());
+        assertEquals("434882", artist.getPopularity());
+        assertEquals("77", artist.getPlaylists());
         assertEquals("UCI3EFb2lvZyBMykNd64JDhg", artist.getYoutubeURL());
 
         //todo assert images, avatar, following
@@ -198,7 +208,7 @@ public class ArtistAPITest extends InstrumentationTestCase {
      *
      */
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme");
+        doLogin();
 
         final String idArtist = "55116991f9c816a0d639ea75";
         final int limit = 20;
@@ -249,10 +259,10 @@ public class ArtistAPITest extends InstrumentationTestCase {
 
     }
 
-    public void testAddFollowers() {
+    public void testAddFollowers()throws Throwable {
 
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme");
+        doLogin();
 
         final String idArtist = "55116991f9c816a0d639ea75";
 
@@ -275,7 +285,7 @@ public class ArtistAPITest extends InstrumentationTestCase {
      *
      */
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme");
+        doLogin();
 
         final String idArtist = "55116991f9c816a0d639ea75";
 
@@ -324,19 +334,19 @@ public class ArtistAPITest extends InstrumentationTestCase {
 
     }
 
-    public void testRemoveFollowers() {
+    public void testRemoveFollowers() throws Throwable {
 
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme");
+        doLogin();
 
         final String idArtist = "55116991f9c816a0d639ea75";
 
-        HummSingleResult<Artist> result = humm.getArtist().removeFollowers(idArtist);
+        HummSingleResult<User> result = humm.getArtist().removeFollowers(idArtist);
 
         assertEquals("ok", result.getStatus_response());
 
-        Artist artist = result.getData_response();
-        assertEquals("Blur", artist.getName());
+        User user = result.getData_response();
+        assertEquals("delete", user.getFirstName());
 
     }
 
@@ -350,18 +360,18 @@ public class ArtistAPITest extends InstrumentationTestCase {
      *
      */
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme");
+        doLogin();
 
         final String idArtist = "55116991f9c816a0d639ea75";
 
-        HummMultipleResult<Artist> result;
+        HummMultipleResult<User> result;
         // Execute the async task on the UI thread! THIS IS KEY!
         runTestOnUiThread(new Runnable() {
 
             @Override
             public void run() {
 
-                new HummTask<HummSingleResult<Artist>>(new HummTask.Job() {
+                new HummTask<HummSingleResult<User>>(new HummTask.Job() {
                     @Override
                     public Object onStart() throws Exception {
                         return humm.getArtist().removeFollowers(idArtist);
@@ -369,11 +379,11 @@ public class ArtistAPITest extends InstrumentationTestCase {
 
                     @Override
                     public void onComplete(Object object) {
-                        HummSingleResult<Artist> result = (HummSingleResult<Artist>) object;
+                        HummSingleResult<User> result = (HummSingleResult<User>) object;
                         assertEquals("ok", result.getStatus_response());
 
-                        Artist artist = result.getData_response();
-                        assertEquals("Blur", artist.getName());
+                        User user = result.getData_response();
+                        assertEquals("delete", user.getFirstName());
 
                         signal.countDown();
 
@@ -399,10 +409,10 @@ public class ArtistAPITest extends InstrumentationTestCase {
 
     }
 
-    public void testGetPlaylists() {
+    public void testGetPlaylists() throws Throwable {
 
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme");
+        doLogin();
 
         final String idArtist = "55116991f9c816a0d639ea75";
         int limit = 10;
@@ -416,10 +426,10 @@ public class ArtistAPITest extends InstrumentationTestCase {
 
     }
 
-    public void testGetRadio() {
+    public void testGetRadio() throws Throwable {
 
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme");
+        doLogin();
 
         final String idArtist = "55116991f9c816a0d639ea75";
         int limit = 10;
@@ -433,10 +443,10 @@ public class ArtistAPITest extends InstrumentationTestCase {
 
     }
 
-    public void testGetSimilar() {
+    public void testGetSimilar() throws Throwable {
 
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme");
+        doLogin();
 
         final String idArtist = "55116991f9c816a0d639ea75";
         int limit = 10;
@@ -450,17 +460,16 @@ public class ArtistAPITest extends InstrumentationTestCase {
 
     }
 
-    public void testGetFeatured() {
+    public void testGetFeatured() throws Throwable {
 
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme");
+        doLogin();
 
-        final String idArtist = "55116991f9c816a0d639ea75";
         int limit = 10;
         int offset = 0;
         final String genre = null;
 
-        HummMultipleResult<Artist> result = humm.getArtist().getFeatured(idArtist, limit, offset, genre);
+        HummMultipleResult<Artist> result = humm.getArtist().getFeatured(limit, offset, genre);
 
         assertEquals("ok", result.getStatus_response());
 
@@ -468,10 +477,10 @@ public class ArtistAPITest extends InstrumentationTestCase {
 
     }
 
-    public void testGetPopular() {
+    public void testGetPopular() throws Throwable {
 
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme");
+        doLogin();
 
         int limit = 10;
         int offset = 0;
@@ -484,10 +493,10 @@ public class ArtistAPITest extends InstrumentationTestCase {
 
     }
 
-    public void testRecent() {
+    public void testRecent() throws Throwable {
 
         final HummAPI humm = HummAPI.getInstance();
-        humm.login("deleteme", "deleteme");
+        doLogin();
 
         int limit = 10;
         int offset = 0;
