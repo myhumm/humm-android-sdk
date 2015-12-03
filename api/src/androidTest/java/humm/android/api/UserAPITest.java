@@ -19,9 +19,7 @@ import static org.hamcrest.CoreMatchers.*;
  * Created by josealonsogarcia on 24/11/15.
  */
 public class UserAPITest extends HummTest {
-
-    cd 
-
+    
     public void testMe() throws Throwable {
 
         final HummAPI humm = HummAPI.getInstance();
