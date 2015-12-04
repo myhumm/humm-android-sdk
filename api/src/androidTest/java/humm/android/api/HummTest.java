@@ -39,4 +39,29 @@ public class HummTest extends InstrumentationTestCase {
         return;
     }
 
+    protected void doLogin(String username, String password) throws Throwable {
+        final HummAPI humm = HummAPI.getInstance();
+        final CountDownLatch signal = new CountDownLatch(1);
+
+        humm.login(username, password, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                signal.countDown();
+
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+                assertTrue(false);
+
+            }
+        });
+
+        //wait for login
+        signal.await(30, TimeUnit.SECONDS);
+
+        return;
+    }
+
 }

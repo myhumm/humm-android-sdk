@@ -3,6 +3,8 @@ package humm.android.api;
 import android.test.InstrumentationTestCase;
 import android.util.Log;
 
+import org.w3c.dom.ls.LSException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,11 +30,26 @@ public class PlaylistsAPITest extends HummTest {
 
         String idPlaylist = "5645aed5b4653cdb631d5632";
 
-        HummSingleResult<PlaylistOwnerHashMap> result = humm.getPlaylists().get(idPlaylist);
+        final CountDownLatch signal = new CountDownLatch(1);
 
-        assertEquals("ok", result.getStatus_response());
-        assertEquals("Bustin' + Dronin'", result.getData_response().getTitle());
-        assertEquals("MxAxG", result.getData_response().getOwnerName());
+        humm.getPlaylists().get(idPlaylist, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                PlaylistOwnerHashMap playlist = (PlaylistOwnerHashMap) result;
+                assertEquals("Title", playlist.getTitle());
+                assertEquals("MxAxG", playlist.getOwnerName());
+                signal.countDown();
+
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
+
     }
 
     public void testCreate() throws Throwable {
@@ -44,10 +61,22 @@ public class PlaylistsAPITest extends HummTest {
         String description = "description";
         boolean isPrivate = false;
 
-        HummSingleResult<PlaylistOwnerHashMap> result = humm.getPlaylists().create(namePlaylist, description, isPrivate);
+        final CountDownLatch signal = new CountDownLatch(1);
 
-        assertEquals("ok", result.getStatus_response());
-        assertEquals("MyTest", result.getData_response().getTitle());
+        humm.getPlaylists().create(namePlaylist, description, isPrivate, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                PlaylistOwnerHashMap playlist = (PlaylistOwnerHashMap) result;
+                assertEquals("MyTest", playlist.getTitle());
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
 
     }
 
@@ -60,14 +89,29 @@ public class PlaylistsAPITest extends HummTest {
         int limit = 5;
         int offset = 0;
 
-        HummMultipleResult<Playlist> result = humm.getPlaylists().getFeatured(limit, offset);
+        final CountDownLatch signal = new CountDownLatch(1);
 
-        if (result != null) {
-            assertEquals("ok", result.getStatus_response());
-            assertEquals(5, result.getData_response().size());
-        } else {
-            assertNull(result); //no content
-        }
+        humm.getPlaylists().getFeatured(limit, offset, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                List<PlaylistOwnerHashMap> playlist = (List) result;
+
+                if (playlist != null) {
+                    assertEquals(5, playlist.size());
+                } else {
+                    assertNull(playlist); //no content
+                }
+
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
     }
 
     public void testUpdate() throws Throwable {
@@ -76,21 +120,37 @@ public class PlaylistsAPITest extends HummTest {
         final HummAPI humm = HummAPI.getInstance();
         doLogin();
 
-        String idPlaylist = "565f2ed396a4f4e521fe3e3b";
+        String idPlaylist = "565f32f298cd5758490cc24d";
         String title = "title new";
         String description = "description new";
         boolean isPrivate = false;
 
-        HummSingleResult<PlaylistOwnerHashMap> result = humm.getPlaylists().update(idPlaylist, title, description, isPrivate);
+        final CountDownLatch signal = new CountDownLatch(1);
 
-        if (result != null) {
-            assertEquals("ok", result.getStatus_response());
-            assertEquals("title new", result.getData_response().getTitle());
-            assertEquals("description new", result.getData_response().getDescription());
-//            assertEquals(5, result.getData_response().size());
-        } else {
-            assertNull(result); //no content
-        }
+        humm.getPlaylists().update(idPlaylist, title, description, isPrivate, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                PlaylistOwnerHashMap playlist = (PlaylistOwnerHashMap) result;
+
+                if (playlist != null) {
+                    assertEquals("title new", playlist.getTitle());
+                    assertEquals("description new", playlist.getDescription());
+                } else {
+                    assertNull(playlist); //no content
+                }
+
+                signal.countDown();
+
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+
+        signal.await(30, TimeUnit.SECONDS);
+
     }
 
     public void testOrder() throws Throwable {
@@ -116,14 +176,23 @@ public class PlaylistsAPITest extends HummTest {
         sid4.put("sid", "54d2be65ae8c5003198baa39");
         order.add(sid4);
 
-        HummMultipleResult<Song> result = humm.getPlaylists().order(idPlaylist, order);
+        final CountDownLatch signal = new CountDownLatch(1);
 
-        if (result != null) {
-            assertEquals("ok", result.getStatus_response());
-//            assertEquals(5, result.getData_response().size());
-        } else {
-            assertNull(result); //no content
-        }
+        humm.getPlaylists().order(idPlaylist, order, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                List<Song> songList = (List) result;
+
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
     }
 
     public void testGetSongs() throws Throwable {
@@ -132,39 +201,57 @@ public class PlaylistsAPITest extends HummTest {
         doLogin();
 
         String idPlaylist = "5645aed5b4653cdb631d5632";
-        int limit = 5;
+        final int limit = 5;
         int offset = 0;
-        HummMultipleResult<Song> result = humm.getPlaylists().getSongs(idPlaylist, limit, offset);
 
-        if (result != null) {
-            assertEquals("ok", result.getStatus_response());
-            assertEquals(5, result.getData_response().size());
-//            assertEquals(5, result.getData_response().size());
-        } else {
-            assertNull(result); //no content
-        }
+        final CountDownLatch signal = new CountDownLatch(1);
+
+        humm.getPlaylists().getSongs(idPlaylist, limit, offset, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                List<Song> songList = (List) result;
+                assertEquals(limit, songList.size());
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+
+        signal.await(30, TimeUnit.SECONDS);
+
     }
 
-    //no tested
     public void testAddSongs() throws Throwable {
 
         final HummAPI humm = HummAPI.getInstance();
         doLogin();
 
         String idPlaylist = "565f32f298cd5758490cc24d";
-        String idSong = "54d2be65ae8c5003198baa39";
+        String idSong = "56403fd834017507dba11880";
         int position = 0;
-        HummSingleResult<PlaylistOwnerHashMap> result = humm.getPlaylists().addSong(idPlaylist, idSong, position);
 
-        if (result != null) {
-            assertEquals("ok", result.getStatus_response());
-//            assertEquals(5, result.getData_response().size());
-        } else {
-            assertNull(result); //no content
-        }
+        final CountDownLatch signal = new CountDownLatch(1);
+
+        humm.getPlaylists().addSong(idPlaylist, idSong, position, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                PlaylistOwnerHashMap playlist = (PlaylistOwnerHashMap) result;
+
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+
+        signal.await(30, TimeUnit.SECONDS);
     }
 
-    //no tested
     public void testRemoveSongs() throws Throwable {
 
         final HummAPI humm = HummAPI.getInstance();
@@ -173,14 +260,21 @@ public class PlaylistsAPITest extends HummTest {
         String idPlaylist = "565f32f298cd5758490cc24d";
         String idSong = "54d2be65ae8c5003198baa39";
 
-        HummSingleResult<Playlist> result = humm.getPlaylists().deleteSong(idPlaylist, idSong);
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getPlaylists().deleteSong(idPlaylist, idSong, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                PlaylistOwnerHashMap playlist = (PlaylistOwnerHashMap) result;
+                signal.countDown();
+            }
 
-        if (result != null) {
-            assertEquals("ok", result.getStatus_response());
-//            assertEquals(5, result.getData_response().size());
-        } else {
-            assertNull(result); //no content
-        }
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
     }
 
     public void testPopular() throws Throwable {
@@ -188,19 +282,28 @@ public class PlaylistsAPITest extends HummTest {
         final HummAPI humm = HummAPI.getInstance();
         doLogin();
 
-        int limit = 0;
+        final int limit = 5;
         int offset = 0;
         int section = 0;
         String uid = null;
 
-        HummMultipleResult<PlaylistOwnerList> result = humm.getPlaylists().getPopular(limit, offset, section, uid);
+        final CountDownLatch signal = new CountDownLatch(1);
 
-        if (result != null) {
-            assertEquals("ok", result.getStatus_response());
-//            assertEquals(5, result.getData_response().size());
-        } else {
-            assertNull(result); //no content
-        }
+        humm.getPlaylists().getPopular(limit, offset, section, uid, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                List<PlaylistOwnerList> playlistList = (List) result;
+                assertEquals(limit, playlistList.size());
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
     }
 
     public void testRecent() throws Throwable {
@@ -208,17 +311,25 @@ public class PlaylistsAPITest extends HummTest {
         final HummAPI humm = HummAPI.getInstance();
         doLogin();
 
-        int limit = 0;
+        final int limit = 5;
         int offset = 0;
 
-        HummMultipleResult<PlaylistOwnerList> result = humm.getPlaylists().getRecent(limit, offset);
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getPlaylists().getRecent(limit, offset, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                List<PlaylistOwnerList> playlistList = (List) result;
+                assertEquals(limit, playlistList.size());
+                signal.countDown();
+            }
 
-        if (result != null) {
-            assertEquals("ok", result.getStatus_response());
-//            assertEquals(5, result.getData_response().size());
-        } else {
-            assertNull(result); //no content
-        }
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
     }
 
     public void testSearch() throws Throwable {
@@ -227,18 +338,27 @@ public class PlaylistsAPITest extends HummTest {
         doLogin();
 
         String keyword = "Thriller";
-        int limit = 0;
+        final int limit = 5;
         int offset = 0;
         int album = 0;
 
-        HummMultipleResult<PlaylistOwnerList> result = humm.getPlaylists().search(keyword, limit, offset, album);
+        final CountDownLatch signal = new CountDownLatch(1);
 
-        if (result != null) {
-            assertEquals("ok", result.getStatus_response());
-//            assertEquals(5, result.getData_response().size());
-        } else {
-            assertNull(result); //no content
-        }
+        humm.getPlaylists().search(keyword, limit, offset, album, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                List<PlaylistOwnerList> playlistList = (List) result;
+                assertEquals(limit, playlistList.size());
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
     }
 
     public void testAddSubscriber() throws Throwable {
@@ -248,14 +368,22 @@ public class PlaylistsAPITest extends HummTest {
 
         String idPlaylist = "563fdb0334017507dba11167";
 
-        HummSingleResult<PlaylistOwnerList> result = humm.getPlaylists().addSubscriber(idPlaylist);
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getPlaylists().addSubscriber(idPlaylist, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                PlaylistOwnerList playlist = (PlaylistOwnerList) result;
 
-        if (result != null) {
-            assertEquals("ok", result.getStatus_response());
-//            assertEquals(5, result.getData_response().size());
-        } else {
-            assertNull(result); //no content
-        }
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
     }
 
     public void testRemoveSubscriber() throws Throwable {
@@ -265,14 +393,22 @@ public class PlaylistsAPITest extends HummTest {
 
         String idPlaylist = "563fdb0334017507dba11167";
 
-        HummSingleResult<PlaylistOwnerList> result = humm.getPlaylists().removeSubscriber(idPlaylist);
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getPlaylists().removeSubscriber(idPlaylist, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                PlaylistOwnerList playlist = (PlaylistOwnerList) result;
 
-        if (result != null) {
-            assertEquals("ok", result.getStatus_response());
-//            assertEquals(5, result.getData_response().size());
-        } else {
-            assertNull(result); //no content
-        }
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
     }
 
 }

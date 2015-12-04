@@ -51,8 +51,8 @@ public class ArtistAPI extends HummAPI {
      * @param idArtist Unique identifier of artist
      * @param limit    Number of returned results (no used)
      * @param offset   Offset results by said number (0 by default)
-     * @param listener called when action is completed or when happens a error. The paramenter of onComplete method is
-     *                 the <code>Artist</code> for a given id.
+     * @param listener called when action is completed or when happens a error. The parameter of onComplete method is
+     *                 a <code>Artist</code> for the idArtists.
      *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
      */
     public void get(final String idArtist, final int limit, final int offset, final OnActionFinishedListener listener) {
@@ -66,7 +66,11 @@ public class ArtistAPI extends HummAPI {
             @Override
             public void onComplete(Object object) {
                 HummSingleResult<Artist> result = (HummSingleResult<Artist>) object;
-
+                if (result == null)
+                {
+                    listener.actionFinished(null);
+                    return;
+                }
                 if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
                     listener.actionFinished(result.getData_response());
                 } else {
@@ -144,6 +148,14 @@ public class ArtistAPI extends HummAPI {
 
     }
 
+    /**
+     * Add current user to an artist's list of followers; returns artist object for a given id
+     *
+     * @param idArtist Unique identifier of artist
+     * @param listener called when action is completed or when happens a error. The parameter of <code>onComplete</code> method is
+     *                 the <code>Artist</code> of the given id
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
     public void addFollowers(final String idArtist, final OnActionFinishedListener listener) {
 
         new HummTask<HummMultipleResult<Artist>>(new HummTask.Job() {
@@ -155,7 +167,11 @@ public class ArtistAPI extends HummAPI {
             @Override
             public void onComplete(Object object) {
                 HummSingleResult<Artist> result = (HummSingleResult<Artist>) object;
-
+                if (result == null)
+                {
+                    listener.actionFinished(null);
+                    return;
+                }
                 if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
                     listener.actionFinished(result.getData_response());
                 } else {
@@ -170,7 +186,11 @@ public class ArtistAPI extends HummAPI {
         }).start();
     }
 
-
+    /**
+     * Add current user to an artist's list of followers; returns artist object for a given id
+     *
+     * @param idArtist Unique identifier of artist
+     */
     public HummSingleResult<Artist> addFollowers(String idArtist) {
 
         HummSingleResult<Artist> result = new HummSingleResult<>();
@@ -276,7 +296,11 @@ public class ArtistAPI extends HummAPI {
             @Override
             public void onComplete(Object object) {
                 HummSingleResult<Artist> result = (HummSingleResult<Artist>) object;
-
+                if (result == null)
+                {
+                    listener.actionFinished(null);
+                    return;
+                }
                 if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
                     listener.actionFinished(result.getData_response());
                 } else {
@@ -291,6 +315,13 @@ public class ArtistAPI extends HummAPI {
         }).start();
     }
 
+    /**
+     * Get playlists / albums associated with an artist; returns a list of playlist / album objects for a given id
+     *
+     * @param idArtist Unique identifier of artist
+     * @param limit    Number of returned results (20 by default)
+     * @param offset   Offset results by said number (0 by default)
+     */
     public HummMultipleResult<Song> getPlaylists(String idArtist, int limit, int offset) {
         HummMultipleResult<Song> result = new HummMultipleResult<>();
         try {
@@ -343,6 +374,16 @@ public class ArtistAPI extends HummAPI {
         return result;
     }
 
+    /**
+     * Get playlists / albums associated with an artist; returns a list of playlist / album objects for a given id
+     *
+     * @param idArtist Unique identifier of artist
+     * @param limit    Number of returned results (20 by default)
+     * @param offset   Offset results by said number (0 by default)
+     * @param listener called when action is completed or when happens a error. The parameter of onComplete method is
+     *                 a list of <code>PlaylistOwnerList</code> for the idArtist.
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
     public void getPlaylists(final String idArtist, final int limit, final int offset, final OnActionFinishedListener listener) {
 
         new HummTask<HummMultipleResult<Song>>(new HummTask.Job() {
@@ -353,8 +394,12 @@ public class ArtistAPI extends HummAPI {
 
             @Override
             public void onComplete(Object object) {
-                HummSingleResult<Song> result = (HummSingleResult<Song>) object;
-
+                HummMultipleResult<Song> result = (HummMultipleResult<Song>) object;
+                if (result == null)
+                {
+                    listener.actionFinished(null);
+                    return;
+                }
                 if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
                     listener.actionFinished(result.getData_response());
                 } else {
@@ -370,10 +415,16 @@ public class ArtistAPI extends HummAPI {
     }
 
 
+    /**
+     * Get a curated list of artist songs; returns a list of song objects for a given artist id
+     *
+     * @param idArtist Unique identifier of artist
+     * @param limit    Number of returned results (20 by default)
+     * @param offset   Offset results by said number (0 by default)
+     */
     public HummMultipleResult<Song> getRadio(String idArtist, int limit, int offset) {
         HummMultipleResult<Song> result = new HummMultipleResult<>();
         try {
-
 
             if (idArtist == null) {
                 result.setStatus_response(HttpURLConnectionHelper.KO);
@@ -422,6 +473,16 @@ public class ArtistAPI extends HummAPI {
         return result;
     }
 
+    /**
+     * Get a curated list of artist songs; returns a list of song objects for a given artist id
+     *
+     * @param idArtist Unique identifier of artist
+     * @param limit    Number of returned results (20 by default)
+     * @param offset   Offset results by said number (0 by default)
+     * @param listener called when action is completed or when happens a error. The parameter of onComplete method is
+     *                 a list of <code>Song</code> for the idArtist given.
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
     public void getRadio(final String idArtist, final int limit, final int offset, final OnActionFinishedListener listener) {
 
         new HummTask<HummMultipleResult<Song>>(new HummTask.Job() {
@@ -432,8 +493,13 @@ public class ArtistAPI extends HummAPI {
 
             @Override
             public void onComplete(Object object) {
-                HummSingleResult<Song> result = (HummSingleResult<Song>) object;
+                HummMultipleResult<Song> result = (HummMultipleResult<Song>) object;
 
+                if (result == null)
+                {
+                    listener.actionFinished(null);
+                    return;
+                }
                 if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
                     listener.actionFinished(result.getData_response());
                 } else {
@@ -448,6 +514,13 @@ public class ArtistAPI extends HummAPI {
         }).start();
     }
 
+    /**
+     * Get a list of musically similar artists; returns a list of artist objects for a given id
+     *
+     * @param idArtist Unique identifier of artist
+     * @param limit    Number of returned results (20 by default)
+     * @param offset   Offset results by said number (0 by default)
+     */
     public HummMultipleResult<Artist> getSimilar(String idArtist, int limit, int offset) {
         HummMultipleResult<Artist> result = new HummMultipleResult<>();
         try {
@@ -499,6 +572,16 @@ public class ArtistAPI extends HummAPI {
         return result;
     }
 
+    /**
+     * Get a list of musically similar artists; returns a list of artist objects for a given id
+     *
+     * @param idArtist Unique identifier of artist
+     * @param limit    Number of returned results (20 by default)
+     * @param offset   Offset results by said number (0 by default)
+     * @param listener called when action is completed or when happens a error. The parameter of onComplete method is
+     *                 a list of similar <code>Artist</code> for the idArtist given.
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
     public void getSimilar(final String idArtist, final int limit, final int offset, final OnActionFinishedListener listener) {
 
         new HummTask<HummMultipleResult<Artist>>(new HummTask.Job() {
@@ -509,8 +592,13 @@ public class ArtistAPI extends HummAPI {
 
             @Override
             public void onComplete(Object object) {
-                HummSingleResult<Artist> result = (HummSingleResult<Artist>) object;
+                HummMultipleResult<Artist> result = (HummMultipleResult<Artist>) object;
 
+                if (result == null)
+                {
+                    listener.actionFinished(null);
+                    return;
+                }
                 if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
                     listener.actionFinished(result.getData_response());
                 } else {
@@ -525,7 +613,17 @@ public class ArtistAPI extends HummAPI {
         }).start();
     }
 
-    public void search(final String keyword,final int limit, final int offset, final OnActionFinishedListener listener) {
+    /**
+     * Search an artist; returns <code>Artist</code>  for a given keyword
+     *
+     * @param keyword  keyword to search by
+     * @param limit    Number of returned results (20 by default)
+     * @param offset   Offset results by said number (0 by default)
+     * @param listener called when action is completed or when happens a error. The parameter of onComplete method is
+     *                 a list of <code>Artist</code> objects for the given keyword.
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
+    public void search(final String keyword, final int limit, final int offset, final OnActionFinishedListener listener) {
 
         new HummTask<HummMultipleResult<Artist>>(new HummTask.Job() {
             @Override
@@ -537,6 +635,11 @@ public class ArtistAPI extends HummAPI {
             public void onComplete(Object object) {
                 HummMultipleResult<Artist> result = (HummMultipleResult<Artist>) object;
 
+                if (result == null)
+                {
+                    listener.actionFinished(null);
+                    return;
+                }
                 if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
                     listener.actionFinished(result.getData_response());
                 } else {
@@ -552,6 +655,13 @@ public class ArtistAPI extends HummAPI {
 
     }
 
+    /**
+     * Search an artist; returns <code>Artist</code>  for a given keyword
+     *
+     * @param keyword keyword to search by
+     * @param limit   Number of returned results (20 by default)
+     * @param offset  Offset results by said number (0 by default)
+     */
     public HummMultipleResult<Artist> doSearch(String keyword, final int limit, final int offset) {
 
 
@@ -611,6 +721,17 @@ public class ArtistAPI extends HummAPI {
 
     }
 
+    /**
+     * Get a list of an artist's top songs for a given id; returns a list of song objects for a given artist id
+     *
+     * @param idArtist Unique identifier of artist
+     * @param limit    Number of returned results (no used)
+     * @param offset   Offset results by said number (0 by default)
+     * @param songType
+     * @param listener called when action is completed or when happens a error. The <code>Object</code> parameter of onComplete method is
+     *                 a list of top <code>Song</code> for the given id.
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
     public void getTopSongs(final String idArtist, final int limit, final int offset, final String songType, final OnActionFinishedListener listener) {
 
         new HummTask<HummMultipleResult<Song>>(new HummTask.Job() {
@@ -623,6 +744,11 @@ public class ArtistAPI extends HummAPI {
             public void onComplete(Object object) {
                 HummMultipleResult<Song> result = (HummMultipleResult<Song>) object;
 
+                if (result == null)
+                {
+                    listener.actionFinished(null);
+                    return;
+                }
                 if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
                     listener.actionFinished(result.getData_response());
                 } else {
@@ -638,7 +764,14 @@ public class ArtistAPI extends HummAPI {
 
     }
 
-
+    /**
+     * Get a list of an artist's top songs for a given id; returns a list of song objects for a given artist id
+     *
+     * @param idArtist Unique identifier of artist
+     * @param limit    Number of returned results (no used)
+     * @param offset   Offset results by said number (0 by default)
+     * @param songType
+     */
     public HummMultipleResult<Song> getTopSongs(String idArtist, int limit, int offset, String songType) {
 
 
@@ -695,8 +828,14 @@ public class ArtistAPI extends HummAPI {
 
     }
 
+    /**
+     * Get a list of artists featured by Humm; returns a list of artist objects
+     *
+     * @param limit  Number of returned results (no used)
+     * @param offset Offset results by said number (0 by default)
+     * @param genre  Filter results by genre
+     */
     public HummMultipleResult<Artist> getFeatured(int limit, int offset, String genre) {
-
 
         HummMultipleResult<Artist> result = new HummMultipleResult<>();
         try {
@@ -744,18 +883,33 @@ public class ArtistAPI extends HummAPI {
 
     }
 
-    public void getFeatured( final int limit, final int offset, final String genre, final OnActionFinishedListener listener) {
+    /**
+     * Get a list of artists featured by Humm; returns a list of artist objects
+     *
+     * @param limit    Number of returned results (no used)
+     * @param offset   Offset results by said number (0 by default)
+     * @param genre    Filter results by genre
+     * @param listener called when action is completed or when happens a error. The <code>Object</code> parameter of onComplete method is
+     *                 a list of  <code>Artist</code>  featured by Humm.
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
+    public void getFeatured(final int limit, final int offset, final String genre, final OnActionFinishedListener listener) {
 
         new HummTask<HummMultipleResult<Artist>>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
-                return getFeatured( limit, offset, genre);
+                return getFeatured(limit, offset, genre);
             }
 
             @Override
             public void onComplete(Object object) {
                 HummMultipleResult<Artist> result = (HummMultipleResult<Artist>) object;
 
+                if (result == null)
+                {
+                    listener.actionFinished(null);
+                    return;
+                }
                 if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
                     listener.actionFinished(result.getData_response());
                 } else {
@@ -771,8 +925,13 @@ public class ArtistAPI extends HummAPI {
 
     }
 
+    /**
+     * Get a list of artists popular on Humm; returns a list of artist objects     *
+     *
+     * @param limit  Number of returned results (no used)
+     * @param offset Offset results by said number (0 by default)
+     */
     public HummMultipleResult<Artist> getPopular(int limit, int offset) {
-
 
         HummMultipleResult<Artist> result = new HummMultipleResult<>();
         try {
@@ -817,6 +976,15 @@ public class ArtistAPI extends HummAPI {
 
     }
 
+    /**
+     * Get a list of artists popular on Humm; returns a list of artist objects     *
+     *
+     * @param limit    Number of returned results (no used)
+     * @param offset   Offset results by said number (0 by default)
+     * @param listener called when action is completed or when happens a error. The <code>Object</code> parameter of onComplete method is
+     *                 a list of  <code>Artist</code>  popular on Humm.
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
     public void getPopular(final int limit, final int offset, final OnActionFinishedListener listener) {
 
         new HummTask<HummMultipleResult<Artist>>(new HummTask.Job() {
@@ -829,6 +997,11 @@ public class ArtistAPI extends HummAPI {
             public void onComplete(Object object) {
                 HummMultipleResult<Artist> result = (HummMultipleResult<Artist>) object;
 
+                if (result == null)
+                {
+                    listener.actionFinished(null);
+                    return;
+                }
                 if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
                     listener.actionFinished(result.getData_response());
                 } else {
@@ -844,8 +1017,13 @@ public class ArtistAPI extends HummAPI {
 
     }
 
+    /**
+     * Get a list of artists recently added on Humm; returns a list of artist objects
+     *
+     * @param limit  Number of returned results (no used)
+     * @param offset Offset results by said number (0 by default)
+     */
     public HummMultipleResult<Artist> getRecent(int limit, int offset) {
-
 
         HummMultipleResult<Artist> result = new HummMultipleResult<>();
         try {
@@ -890,6 +1068,15 @@ public class ArtistAPI extends HummAPI {
 
     }
 
+    /**
+     * Get a list of artists recently added on Humm; returns a list of artist objects
+     *
+     * @param limit    Number of returned results (no used)
+     * @param offset   Offset results by said number (0 by default)
+     * @param listener called when action is completed or when happens a error. The <code>Object</code> parameter of onComplete method is
+     *                 a list of  <code>Artist</code>  recently added on Humm.
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
     public void getRecent(final int limit, final int offset, final OnActionFinishedListener listener) {
 
         new HummTask<HummMultipleResult<Artist>>(new HummTask.Job() {
@@ -902,6 +1089,11 @@ public class ArtistAPI extends HummAPI {
             public void onComplete(Object object) {
                 HummMultipleResult<Artist> result = (HummMultipleResult<Artist>) object;
 
+                if (result == null)
+                {
+                    listener.actionFinished(null);
+                    return;
+                }
                 if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
                     listener.actionFinished(result.getData_response());
                 } else {

@@ -1,7 +1,10 @@
 package humm.android.api;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import humm.android.api.Model.Artist;
 import humm.android.api.Model.HummMultipleResult;
@@ -19,22 +22,32 @@ import static org.hamcrest.CoreMatchers.*;
  * Created by josealonsogarcia on 24/11/15.
  */
 public class UserAPITest extends HummTest {
-    
+
     public void testMe() throws Throwable {
 
         final HummAPI humm = HummAPI.getInstance();
         doLogin();
-        HummSingleResult<User> me = humm.getUser().me();
 
-        assertEquals("ok", me.getStatus_response());
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getUser().me(new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                User user = (User) result;
 
-        assertEquals("deleteme100", me.getData_response().getUsername());
-        assertEquals("delete", me.getData_response().getFirstName());
-        assertEquals("me", me.getData_response().getLastName());
-        assertEquals("deleteme100@deleteme.com", me.getData_response().getEmail());
+                assertEquals("deleteme100", user.getUsername());
+                assertEquals("delete", user.getFirstName());
+                assertEquals("me", user.getLastName());
+                assertEquals("deleteme100@deleteme.com", user.getEmail());
 
-//        List<String> likes = Arrays.asList("rock", "pop");
-//        assertThat(likes, is(me.getData_response().getPreferencesLike()));
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
 
     }
 
@@ -43,31 +56,51 @@ public class UserAPITest extends HummTest {
         final HummAPI humm = HummAPI.getInstance();
 
         doLogin();
-        int limit = 5;
+        final int limit = 5;
         int offset = 0;
 
-        HummMultipleResult<PlaylistOwnerList> releases = humm.getUser().discoverRealeses(limit, offset);
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getUser().discoverRealeses(limit, offset, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                List<PlaylistOwnerList> playlistList = (List) result;
+                assertEquals(limit, playlistList.size());
+                signal.countDown();
+            }
 
-        assertEquals("ok", releases.getStatus_response());
-        assertEquals(5, releases.getData_response().size());
-
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
 
     }
 
     public void testDiscoverArtists() throws Throwable {
 
-
         final HummAPI humm = HummAPI.getInstance();
 
         doLogin();
-        int limit = 5;
+        final int limit = 5;
         int offset = 0;
 
-        HummMultipleResult<Artist> releases = humm.getUser().discoverArtists(limit, offset);
+        final CountDownLatch signal = new CountDownLatch(1);
 
-        assertEquals("ok", releases.getStatus_response());
-        assertEquals(5, releases.getData_response().size());
+        humm.getUser().discoverArtists(limit, offset, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                List<Artist> artistList = (List) result;
+                assertEquals(limit, artistList.size());
+                signal.countDown();
+            }
 
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
 
     }
 
@@ -76,14 +109,25 @@ public class UserAPITest extends HummTest {
 
         final HummAPI humm = HummAPI.getInstance();
         doLogin();
-        int limit = 5;
+        final int limit = 1;
         int offset = 0;
 
-        HummMultipleResult<PlaylistOwnerList> result = humm.getUser().discoverPlaylists(limit, offset);
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getUser().discoverPlaylists(limit, offset, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                List<PlaylistOwnerList> playlist = (List) result;
+                assertEquals(limit, playlist.size());
+                signal.countDown();
+            }
 
-        assertEquals("ok", result.getStatus_response());
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
 
-        assertEquals(5, result.getData_response().size());
     }
 
     public void testAddFavourites() throws Throwable {
@@ -92,9 +136,20 @@ public class UserAPITest extends HummTest {
         doLogin();
         String idSong = "557ecbf86a64fc1b8bed533f";
 
-        HummSingleResult<Song> result = humm.getUser().addFavourites(idSong);
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getUser().addFavourites(idSong, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                Song song = (Song) result;
+                signal.countDown();
+            }
 
-        assertEquals("ok", result.getStatus_response());
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
 
     }
 
@@ -104,13 +159,24 @@ public class UserAPITest extends HummTest {
         doLogin();
         String idUser = "5649c572ae8c502824a46a99"; //Blur
 
-        HummSingleResult<User> result = humm.getUser().addFollows(idUser);
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getUser().addFollows(idUser, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                User user = (User) result;
+                signal.countDown();
+            }
 
-        assertEquals("ok", result.getStatus_response());
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
 
     }
 
-    //FIXME: returns
+
     /*
     "status_response": "ok",
   "data_response": [
@@ -125,9 +191,22 @@ public class UserAPITest extends HummTest {
         doLogin();
         String idUser = "5649c572ae8c502824a46a99"; //user 1
 
-        HummMultipleResult result = humm.getUser().removeFollows(idUser);
 
-        assertEquals("ok", result.getStatus_response());
+        final CountDownLatch signal = new CountDownLatch(1);
+
+        humm.getUser().removeFollows(idUser, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                List hashmapList = (List) result;
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
 
     }
 
@@ -173,12 +252,31 @@ public class UserAPITest extends HummTest {
         doLogin();
         String idUser = "5649c572ae8c502824a46a99"; //user1
 
-        HummSingleResult<User> result = humm.getUser().get(idUser);
+//        HummSingleResult<User> result = humm.getUser().get(idUser);
+//
+//        assertEquals("ok", result.getStatus_response());
+//        assertEquals("user1", result.getData_response().getUsername());
+//        assertEquals("user1", result.getData_response().getFirstName());
+//        assertEquals("test", result.getData_response().getLastName());
 
-        assertEquals("ok", result.getStatus_response());
-        assertEquals("user1", result.getData_response().getUsername());
-        assertEquals("user1", result.getData_response().getFirstName());
-        assertEquals("test", result.getData_response().getLastName());
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getUser().get(idUser, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                User user = (User) result;
+                assertEquals("user1", user.getUsername());
+                assertEquals("user1", user.getFirstName());
+                assertEquals("test", user.getLastName());
+
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
 
     }
 
@@ -201,24 +299,33 @@ public class UserAPITest extends HummTest {
         final HummAPI humm = HummAPI.getInstance();
         doLogin();
         String idUser = "5649c572ae8c502824a46a99"; //user1
-        int limit = 0;
+        final int limit = 2;
         int offset = 0;
 
-        HummMultipleResult<User> result = humm.getUser().getFollows(idUser, limit, offset);
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getUser().getFollows(idUser, limit, offset, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                List<User> userList = (List) result;
+                assertEquals(limit, userList.size());
+                signal.countDown();
+            }
 
-        if (result != null) {
-            assertEquals("ok", result.getStatus_response());
-        } else {
-            assertNull(result); //no content
-        }
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
     }
 
     public void testGetPlaylists() throws Throwable {
 
         final HummAPI humm = HummAPI.getInstance();
         doLogin();
-        String idUser = "564dc3630c7d72187b8908f0"; //deleteme
-        int limit = 0;
+        String idUser = "564dc3630c7d72187b8908f0"; //deletemet
+        final int limit = 2;
         int offset = 0;
 
         HummMultipleResult<PlaylistOwnerInt> result = humm.getUser().getPlaylists(idUser, limit, offset);
@@ -228,6 +335,23 @@ public class UserAPITest extends HummTest {
         } else {
             assertNull(result); //no content
         }
+
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getUser().getPlaylists(idUser, limit, offset, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                List<PlaylistOwnerInt> playlistList = (List) result;
+                assertEquals(limit, playlistList.size());
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
     }
 
 //    public void testPlays() throws Throwable {

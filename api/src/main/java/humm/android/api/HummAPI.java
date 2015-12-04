@@ -50,14 +50,16 @@ public class HummAPI {
     protected HummAPI() {
         clientId = "5433be703acd3952a3e9ec28";
         grantType = "password";
-//        endpoint = "http://api.myhumm.com";
         endpoint = "http://api.myhumm.com/v2";
-//        endpoint = "http://134.213.62.164:8080";
-//        endpoint_covers = "http://wave.livingindietv.com/images/playlist?id=%s&size=thumb";
         token_expires = 0;
     }
 
-    //    public void login(String username, String password, final OnActionFinishedListener listener) {
+    /**
+     * login into humm with the username and password given
+     *
+     * @param username username
+     * @param password password
+     */
     public void login(String username, String password) {
 
         getUser().doLogin(username, password, new OnActionFinishedListener() {
@@ -74,15 +76,20 @@ public class HummAPI {
             }
 
             public void onError(Exception e) {
-//                if (listener != null) {
-//                    listener.onError(e);
-//                }
-
             }
         });
 
     }
 
+    /**
+     * login into humm with the username and password given
+     *
+     * @param username username
+     * @param password password
+     * @param listener called when action is completed or when happens a error. The parameter of onComplete method is
+     *                 a <code>LoginInfo</code> object.
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
     public void login(String username, String password, final OnActionFinishedListener listener) {
 
         getUser().doLogin(username, password, new OnActionFinishedListener() {
@@ -101,9 +108,6 @@ public class HummAPI {
             }
 
             public void onError(Exception e) {
-//                if (listener != null) {
-//                    listener.onError(e);
-//                }
                 listener.onError(e);
 
             }
@@ -112,7 +116,19 @@ public class HummAPI {
     }
 
 
-    public void signup(String username, String password, String email, String firstname, String lastname) {
+    /**
+     * creates a new user into humm with the data given.
+     *
+     * @param username  username
+     * @param password  password
+     * @param email     email
+     * @param firstname firstname
+     * @param lastname  lastname
+     * @param listener  called when action is completed or when happens a error. The parameter of onComplete method is
+     *                  a <code>LoginInfo</code> object.
+     *                  Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
+    public void signup(String username, String password, String email, String firstname, String lastname, final OnActionFinishedListener listener) {
 
         HummSingleResult<LoginInfo> login = getUser().doSignup(username, password, email, firstname, lastname);
 
@@ -129,12 +145,13 @@ public class HummAPI {
                 }
 
                 updateLoginData(login.getData_response());
+                listener.actionFinished(login.getData_response());
 
             }
 
             @Override
             public void onError(Exception e) {
-
+                listener.onError(e);
             }
         });
 
@@ -166,6 +183,18 @@ public class HummAPI {
         token_expires = loginInfo.getExpires_in();
     }
 
+    /**
+     * Get a list of songs for a radio; returns a list of song objects
+     *
+     * @param limit     Number of returned results (20 by default)
+     * @param genres    List of String with genres to play
+     * @param moods     List of String with moods to play
+     * @param discovery Current user's discovery radio (false by default)
+     * @param own       Current user's radio (false by default)
+     * @param listener  called when action is completed or when happens a error. The parameter of onComplete method is
+     *                  a list of <code>Song</code> .
+     *                  Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
     public void radio(final int limit, final List<String> genres, final List<String> moods, final boolean discovery, final boolean own, final OnActionFinishedListener listener) {
         new HummTask<HummMultipleResult<Song>>(new HummTask.Job() {
             @Override
@@ -185,6 +214,15 @@ public class HummAPI {
         });
     }
 
+    /**
+     * Get a list of songs for a radio; returns a list of song objects
+     *
+     * @param limit     Number of returned results (20 by default)
+     * @param genres    List of String with genres to play
+     * @param moods     List of String with moods to play
+     * @param discovery Current user's discovery radio (false by default)
+     * @param own       Current user's radio (false by default)
+     */
     public HummMultipleResult<Song> radio(final int limit, List<String> genres, List<String> moods, boolean discovery, boolean own) {
 
         HummMultipleResult<Song> result = new HummMultipleResult<>();

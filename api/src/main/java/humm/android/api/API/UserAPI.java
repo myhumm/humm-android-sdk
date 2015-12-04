@@ -64,7 +64,7 @@ public class UserAPI extends HummAPI {
             public void onError(Exception e) {
                 listener.onError(new HummException(e.getLocalizedMessage()));
             }
-        });
+        }).start();
     }
 
 
@@ -227,6 +227,13 @@ public class UserAPI extends HummAPI {
         return result;
     }
 
+    /**
+     * Get the current user; returns a user object
+     *
+     * @param listener called when action is completed or when happens a error. The parameter of onComplete method is
+     *                 a list of <code>User</code> .
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
     public void me(final OnActionFinishedListener listener) {
         new HummTask<HummSingleResult<User>>(new HummTask.Job() {
             @Override
@@ -236,16 +243,30 @@ public class UserAPI extends HummAPI {
 
             @Override
             public void onComplete(Object object) {
-                listener.actionFinished(object);
+                HummSingleResult<User> result = (HummSingleResult<User>) object;
+
+                if (result == null) {
+                    listener.actionFinished(null);
+                    return;
+                }
+
+                if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
+                    listener.actionFinished(result.getData_response());
+                } else {
+                    listener.onError(new HummException(result.getError_response()));
+                }
             }
 
             @Override
             public void onError(Exception e) {
                 listener.onError(new HummException(e.getLocalizedMessage()));
             }
-        });
+        }).start();
     }
 
+    /**
+     * Get the current user; returns a user object
+     */
     public HummSingleResult<User> me() {
 
         HummSingleResult<User> result = new HummSingleResult<>();
@@ -281,12 +302,20 @@ public class UserAPI extends HummAPI {
 
         }
 
-
         return result;
     }
 
+    /**
+     * Get a list of songs featured by Humm; returns a list of song objects
+     *
+     * @param limit    Number of returned results (no used)
+     * @param offset   Offset results by said number (0 by default)
+     * @param listener called when action is completed or when happens a error. The parameter of onComplete method is
+     *                 a list of <code>Playlist</code>.
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
     public void discoverRealeses(final int limit, final int offset, final OnActionFinishedListener listener) {
-        new HummTask<HummMultipleResult<Playlist>>(new HummTask.Job() {
+        new HummTask<HummMultipleResult<PlaylistOwnerList>>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
                 return discoverRealeses(limit, offset);
@@ -294,16 +323,33 @@ public class UserAPI extends HummAPI {
 
             @Override
             public void onComplete(Object object) {
-                listener.actionFinished(object);
+                HummMultipleResult<PlaylistOwnerList> result = (HummMultipleResult<PlaylistOwnerList>) object;
+
+                if (result == null) {
+                    listener.actionFinished(null);
+                    return;
+                }
+
+                if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
+                    listener.actionFinished(result.getData_response());
+                } else {
+                    listener.onError(new HummException(result.getError_response()));
+                }
             }
 
             @Override
             public void onError(Exception e) {
                 listener.onError(new HummException(e.getLocalizedMessage()));
             }
-        });
+        }).start();
     }
 
+    /**
+     * Get a list of songs featured by Humm; returns a list of song objects
+     *
+     * @param limit  Number of returned results (no used)
+     * @param offset Offset results by said number (0 by default)
+     */
     public HummMultipleResult<PlaylistOwnerList> discoverRealeses(int limit, int offset) {
 
         HummMultipleResult<PlaylistOwnerList> result = new HummMultipleResult<>();
@@ -351,6 +397,15 @@ public class UserAPI extends HummAPI {
         return result;
     }
 
+    /**
+     * Get a list of recommended playlists / albums; returns a list of playlist / album objects
+     *
+     * @param limit    Number of returned results (no used)
+     * @param offset   Offset results by said number (0 by default)
+     * @param listener called when action is completed or when happens a error. The parameter of onComplete method is
+     *                 a list of <code>Artist</code>.
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
     public void discoverArtists(final int limit, final int offset, final OnActionFinishedListener listener) {
         new HummTask<HummMultipleResult<Artist>>(new HummTask.Job() {
             @Override
@@ -360,16 +415,33 @@ public class UserAPI extends HummAPI {
 
             @Override
             public void onComplete(Object object) {
-                listener.actionFinished(object);
+                HummMultipleResult<Artist> result = (HummMultipleResult<Artist>) object;
+
+                if (result == null) {
+                    listener.actionFinished(null);
+                    return;
+                }
+
+                if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
+                    listener.actionFinished(result.getData_response());
+                } else {
+                    listener.onError(new HummException(result.getError_response()));
+                }
             }
 
             @Override
             public void onError(Exception e) {
                 listener.onError(new HummException(e.getLocalizedMessage()));
             }
-        });
+        }).start();
     }
 
+    /**
+     * Get a list of recommended playlists / albums; returns a list of playlist / album objects
+     *
+     * @param limit  Number of returned results (no used)
+     * @param offset Offset results by said number (0 by default)
+     */
     public HummMultipleResult<Artist> discoverArtists(int limit, int offset) {
 
         HummMultipleResult<Artist> result = new HummMultipleResult<>();
@@ -417,8 +489,17 @@ public class UserAPI extends HummAPI {
         return result;
     }
 
+    /**
+     * Get a list of recommended playlists / albums; returns a list of playlist / album objects
+     *
+     * @param limit    Number of returned results (no used)
+     * @param offset   Offset results by said number (0 by default)
+     * @param listener called when action is completed or when happens a error. The parameter of onComplete method is
+     *                 a list of <code>Playlist</code>.
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
     public void discoverPlaylists(final int limit, final int offset, final OnActionFinishedListener listener) {
-        new HummTask<HummMultipleResult<Playlist>>(new HummTask.Job() {
+        new HummTask<HummMultipleResult<PlaylistOwnerList>>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
                 return discoverPlaylists(limit, offset);
@@ -426,16 +507,33 @@ public class UserAPI extends HummAPI {
 
             @Override
             public void onComplete(Object object) {
-                listener.actionFinished(object);
+                HummMultipleResult<PlaylistOwnerList> result = (HummMultipleResult<PlaylistOwnerList>) object;
+
+                if (result == null) {
+                    listener.actionFinished(null);
+                    return;
+                }
+
+                if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
+                    listener.actionFinished(result.getData_response());
+                } else {
+                    listener.onError(new HummException(result.getError_response()));
+                }
             }
 
             @Override
             public void onError(Exception e) {
                 listener.onError(new HummException(e.getLocalizedMessage()));
             }
-        });
+        }).start();
     }
 
+    /**
+     * Get a list of recommended playlists / albums; returns a list of playlist / album objects
+     *
+     * @param limit  Number of returned results (no used)
+     * @param offset Offset results by said number (0 by default)
+     */
     public HummMultipleResult<PlaylistOwnerList> discoverPlaylists(int limit, int offset) {
 
         HummMultipleResult<PlaylistOwnerList> result = new HummMultipleResult<>();
@@ -483,6 +581,14 @@ public class UserAPI extends HummAPI {
         return result;
     }
 
+    /**
+     * Add song to current user favourites; returns a song object
+     *
+     * @param idSong   Unique identifier of song
+     * @param listener called when action is completed or when happens a error. The parameter of onComplete method is
+     *                 a <code>Song</code>.
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
     public void addFavourites(final String idSong, final OnActionFinishedListener listener) {
         new HummTask<HummSingleResult<Song>>(new HummTask.Job() {
             @Override
@@ -492,16 +598,32 @@ public class UserAPI extends HummAPI {
 
             @Override
             public void onComplete(Object object) {
-                listener.actionFinished(object);
+                HummSingleResult<Song> result = (HummSingleResult<Song>) object;
+
+                if (result == null) {
+                    listener.actionFinished(null);
+                    return;
+                }
+
+                if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
+                    listener.actionFinished(result.getData_response());
+                } else {
+                    listener.onError(new HummException(result.getError_response()));
+                }
             }
 
             @Override
             public void onError(Exception e) {
                 listener.onError(new HummException(e.getLocalizedMessage()));
             }
-        });
+        }).start();
     }
 
+    /**
+     * Add song to current user favourites; returns a song object
+     *
+     * @param idSong Unique identifier of song
+     */
     public HummSingleResult<Song> addFavourites(String idSong) {
 
         HummSingleResult<Song> result = new HummSingleResult<>();
@@ -547,7 +669,14 @@ public class UserAPI extends HummAPI {
         return result;
     }
 
-
+    /**
+     * Add song to current user favourites; returns a song object
+     *
+     * @param idUser   Unique identifier of user
+     * @param listener called when action is completed or when happens a error. The parameter of onComplete method is
+     *                 a <code>User</code>.
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
     public void addFollows(final String idUser, final OnActionFinishedListener listener) {
         new HummTask<HummSingleResult<User>>(new HummTask.Job() {
             @Override
@@ -557,16 +686,32 @@ public class UserAPI extends HummAPI {
 
             @Override
             public void onComplete(Object object) {
-                listener.actionFinished(object);
+                HummSingleResult<User> result = (HummSingleResult<User>) object;
+
+                if (result == null) {
+                    listener.actionFinished(null);
+                    return;
+                }
+
+                if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
+                    listener.actionFinished(result.getData_response());
+                } else {
+                    listener.onError(new HummException(result.getError_response()));
+                }
             }
 
             @Override
             public void onError(Exception e) {
                 listener.onError(new HummException(e.getLocalizedMessage()));
             }
-        });
+        }).start();
     }
 
+    /**
+     * Add song to current user favourites; returns a song object
+     *
+     * @param idUser Unique identifier of user
+     */
     public HummSingleResult<User> addFollows(String idUser) {
 
         HummSingleResult<User> result = new HummSingleResult<>();
@@ -612,8 +757,16 @@ public class UserAPI extends HummAPI {
         return result;
     }
 
+    /**
+     * Remove user from the list current user follows; returns a user object
+     *
+     * @param idUser   Unique identifier of user
+     * @param listener called when action is completed or when happens a error. The parameter of onComplete method is
+     *                 a list of hashmaps with uids code.
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
     public void removeFollows(final String idUser, final OnActionFinishedListener listener) {
-        new HummTask<HummSingleResult<User>>(new HummTask.Job() {
+        new HummTask<HummMultipleResult>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
                 return removeFollows(idUser);
@@ -621,16 +774,32 @@ public class UserAPI extends HummAPI {
 
             @Override
             public void onComplete(Object object) {
-                listener.actionFinished(object);
+                HummMultipleResult result = (HummMultipleResult) object;
+
+                if (result == null) {
+                    listener.actionFinished(null);
+                    return;
+                }
+
+                if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
+                    listener.actionFinished(result.getData_response());
+                } else {
+                    listener.onError(new HummException(result.getError_response()));
+                }
             }
 
             @Override
             public void onError(Exception e) {
                 listener.onError(new HummException(e.getLocalizedMessage()));
             }
-        });
+        }).start();
     }
 
+    /**
+     * Remove user from the list current user follows; returns a user object
+     *
+     * @param idUser Unique identifier of user
+     */
     public HummMultipleResult removeFollows(String idUser) {
 
         HummMultipleResult result = new HummMultipleResult<>();
@@ -646,7 +815,7 @@ public class UserAPI extends HummAPI {
                 return result;
             }
 
-            Reader reader = HttpURLConnectionHelper.deleteHttpConnection(endpoint + "/users/" + idUser + "/follows", null,  token);
+            Reader reader = HttpURLConnectionHelper.deleteHttpConnection(endpoint + "/users/" + idUser + "/follows", null, token);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
@@ -737,69 +906,68 @@ public class UserAPI extends HummAPI {
 //    }
 
     //not available for now
-    private void search(final int limit, final int offset, final OnActionFinishedListener listener) {
-        new HummTask<HummMultipleResult<User>>(new HummTask.Job() {
-            @Override
-            public Object onStart() throws Exception {
-                return search(limit, offset);
-            }
-
-            @Override
-            public void onComplete(Object object) {
-                listener.actionFinished(object);
-            }
-
-            @Override
-            public void onError(Exception e) {
-                listener.onError(new HummException(e.getLocalizedMessage()));
-            }
-        });
-    }
+//    private void search(final int limit, final int offset, final OnActionFinishedListener listener) {
+//        new HummTask<HummMultipleResult<User>>(new HummTask.Job() {
+//            @Override
+//            public Object onStart() throws Exception {
+//                return search(limit, offset);
+//            }
+//
+//            @Override
+//            public void onComplete(Object object) {
+//                listener.actionFinished(object);
+//            }
+//
+//            @Override
+//            public void onError(Exception e) {
+//                listener.onError(new HummException(e.getLocalizedMessage()));
+//            }
+//        }).start();
+//    }
 
     //not available for now
-    private HummMultipleResult<User> search(int limit, int offset) {
+//    private HummMultipleResult<User> search(int limit, int offset) {
+//
+//        HummMultipleResult<User> result = new HummMultipleResult<>();
+//        try {
+//
+//            Type listType = new TypeToken<HummMultipleResult<User>>() {
+//            }.getType();
+//
+//            JSONObject parameters = new JSONObject();
+//            if (limit > 0) {
+//                parameters.put("limit", limit);
+//            }
+//            if (offset > 0) {
+//                parameters.put("offset", offset);
+//            }
+//
+//            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/users/", parameters, token);
+//            result = new Gson().fromJson(reader, listType);
+//
+//        } catch (IOException ex) {
+//            // HttpUrlConnection will throw an IOException if any 4XX
+//            // response is sent. If we request the status again, this
+//            // time the internal status will be properly set, and we'll be
+//            // able to retrieve it.
+//            Log.e("Debug", "error " + ex.getMessage(), ex);
+//            //android bug with 401
+//            result.setStatus_response(HttpURLConnectionHelper.KO);
+//            result.setError_response("Unauthorized");
+//
+//        } catch (JSONException e) {
+//            Log.e("Debug", "error " + e.getMessage(), e);
+//            result.setStatus_response(HttpURLConnectionHelper.KO);
+//            result.setError_response("error in params");
+//        } catch (Exception e) {
+//            Log.e("ERROR", "error " + e.getMessage(), e);
+//            result.setStatus_response(HttpURLConnectionHelper.KO);
+//            result.setError_response("sync error");
+//        }
+//
+//        return result;
+//    }
 
-        HummMultipleResult<User> result = new HummMultipleResult<>();
-        try {
-
-            Type listType = new TypeToken<HummMultipleResult<User>>() {
-            }.getType();
-
-            JSONObject parameters = new JSONObject();
-            if (limit > 0) {
-                parameters.put("limit", limit);
-            }
-            if (offset > 0) {
-                parameters.put("offset", offset);
-            }
-
-            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/users/", parameters, token);
-            result = new Gson().fromJson(reader, listType);
-
-        } catch (IOException ex) {
-            // HttpUrlConnection will throw an IOException if any 4XX
-            // response is sent. If we request the status again, this
-            // time the internal status will be properly set, and we'll be
-            // able to retrieve it.
-            Log.e("Debug", "error " + ex.getMessage(), ex);
-            //android bug with 401
-            result.setStatus_response(HttpURLConnectionHelper.KO);
-            result.setError_response("Unauthorized");
-
-        } catch (JSONException e) {
-            Log.e("Debug", "error " + e.getMessage(), e);
-            result.setStatus_response(HttpURLConnectionHelper.KO);
-            result.setError_response("error in params");
-        } catch (Exception e) {
-            Log.e("ERROR", "error " + e.getMessage(), e);
-            result.setStatus_response(HttpURLConnectionHelper.KO);
-            result.setError_response("sync error");
-        }
-
-        return result;
-    }
-
-//    //FIXME not sure about result, doesnt documented
 //    public void addSubscriptions(final String idPlaylist, final OnActionFinishedListener listener) {
 //        new HummTask<HummSingleResult<Playlist>>(new HummTask.Job() {
 //            @Override
@@ -920,6 +1088,14 @@ public class UserAPI extends HummAPI {
 //        return result;
 //    }
 
+    /**
+     * Get a user; returns a user object for a given id
+     *
+     * @param idUser   Unique identifier of user
+     * @param listener called when action is completed or when happens a error. The parameter of onComplete method is
+     *                 a <code>User</code>.
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
     public void get(final String idUser, final OnActionFinishedListener listener) {
         new HummTask<HummSingleResult<User>>(new HummTask.Job() {
             @Override
@@ -929,16 +1105,32 @@ public class UserAPI extends HummAPI {
 
             @Override
             public void onComplete(Object object) {
-                listener.actionFinished(object);
+                HummSingleResult<User> result = (HummSingleResult<User>) object;
+
+                if (result == null) {
+                    listener.actionFinished(null);
+                    return;
+                }
+
+                if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
+                    listener.actionFinished(result.getData_response());
+                } else {
+                    listener.onError(new HummException(result.getError_response()));
+                }
             }
 
             @Override
             public void onError(Exception e) {
                 listener.onError(new HummException(e.getLocalizedMessage()));
             }
-        });
+        }).start();
     }
 
+    /**
+     * Get a user; returns a user object for a given id
+     *
+     * @param idUser Unique identifier of user
+     */
     public HummSingleResult<User> get(String idUser) {
 
         HummSingleResult<User> result = new HummSingleResult<>();
@@ -1049,7 +1241,16 @@ public class UserAPI extends HummAPI {
 //        return result;
 //    }
 
-
+    /**
+     * Get a list of recommended playlists / albums; returns a list of playlist / album objects
+     *
+     * @param idUser   Unique identifier of user
+     * @param limit    Number of returned results (no used)
+     * @param offset   Offset results by said number (0 by default)
+     * @param listener called when action is completed or when happens a error. The parameter of onComplete method is
+     *                 a list of <code>User</code>.
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
     public void getFollows(final String idUser, final int limit, final int offset, final OnActionFinishedListener listener) {
         new HummTask<HummMultipleResult<User>>(new HummTask.Job() {
             @Override
@@ -1059,16 +1260,34 @@ public class UserAPI extends HummAPI {
 
             @Override
             public void onComplete(Object object) {
-                listener.actionFinished(object);
+                HummMultipleResult<User> result = (HummMultipleResult<User>) object;
+
+                if (result == null) {
+                    listener.actionFinished(null);
+                    return;
+                }
+
+                if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
+                    listener.actionFinished(result.getData_response());
+                } else {
+                    listener.onError(new HummException(result.getError_response()));
+                }
             }
 
             @Override
             public void onError(Exception e) {
                 listener.onError(new HummException(e.getLocalizedMessage()));
             }
-        });
+        }).start();
     }
 
+    /**
+     * Get a list of recommended playlists / albums; returns a list of playlist / album objects
+     *
+     * @param idUser Unique identifier of user
+     * @param limit  Number of returned results (no used)
+     * @param offset Offset results by said number (0 by default)
+     */
     public HummMultipleResult<User> getFollows(String idUser, int limit, int offset) {
 
         HummMultipleResult<User> result = new HummMultipleResult<>();
@@ -1118,8 +1337,19 @@ public class UserAPI extends HummAPI {
         return result;
     }
 
+
+    /**
+     * Get a list of recommended playlists / albums; returns a list of playlist / album objects
+     *
+     * @param idUser   Unique identifier of user
+     * @param limit    Number of returned results (no used)
+     * @param offset   Offset results by said number (0 by default)
+     * @param listener called when action is completed or when happens a error. The parameter of onComplete method is
+     *                 a list of <code>PlaylistOwnerInt</code>.
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
     public void getPlaylists(final String idUser, final int limit, final int offset, final OnActionFinishedListener listener) {
-        new HummTask<HummMultipleResult<Playlist>>(new HummTask.Job() {
+        new HummTask<HummMultipleResult<PlaylistOwnerInt>>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
                 return getPlaylists(idUser, limit, offset);
@@ -1127,16 +1357,34 @@ public class UserAPI extends HummAPI {
 
             @Override
             public void onComplete(Object object) {
-                listener.actionFinished(object);
+                HummMultipleResult<PlaylistOwnerInt> result = (HummMultipleResult<PlaylistOwnerInt>) object;
+
+                if (result == null) {
+                    listener.actionFinished(null);
+                    return;
+                }
+
+                if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
+                    listener.actionFinished(result.getData_response());
+                } else {
+                    listener.onError(new HummException(result.getError_response()));
+                }
             }
 
             @Override
             public void onError(Exception e) {
                 listener.onError(new HummException(e.getLocalizedMessage()));
             }
-        });
+        }).start();
     }
 
+    /**
+     * Get a list of recommended playlists / albums; returns a list of playlist / album objects
+     *
+     * @param idUser Unique identifier of user
+     * @param limit  Number of returned results (no used)
+     * @param offset Offset results by said number (0 by default)
+     */
     public HummMultipleResult<PlaylistOwnerInt> getPlaylists(String idUser, int limit, int offset) {
 
         HummMultipleResult<PlaylistOwnerInt> result = new HummMultipleResult<>();

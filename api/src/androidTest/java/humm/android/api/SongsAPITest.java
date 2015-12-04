@@ -12,12 +12,14 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import humm.android.api.Model.HummMultipleResult;
 import humm.android.api.Model.HummSingleResult;
 import humm.android.api.Model.Playlist;
+import humm.android.api.Model.PlaylistOwnerHashMap;
 import humm.android.api.Model.Song;
 
 /**
@@ -29,19 +31,35 @@ public class SongsAPITest extends HummTest {
 
         final HummAPI humm = HummAPI.getInstance();
         doLogin();
-        String idSong = "5649c572ae8c502824a46a99";
+        String idSong = "557ecac76a64fc1b8bed450a";
 
-        HummSingleResult<Song> result = humm.getSongs().get(idSong);
+        final CountDownLatch signal = new CountDownLatch(1);
 
-        if (result != null) {
-            assertEquals("ok", result.getStatus_response());
-            assertEquals("track", result.getData_response().getType());
-            assertEquals(0, result.getData_response().getPopularity());
-            assertEquals(16, result.getData_response().getPlaylists());
-            assertEquals("Airbag", result.getData_response().getTitle());
-        } else {
-            assertNull(result); //no content
-        }
+        humm.getSongs().get(idSong, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                Song song = (Song) result;
+
+                if (song != null) {
+                    assertEquals("track", song.getType());
+                    assertEquals("0", song.getPopularity());
+                    assertEquals("16", song.getPlaylists());
+                    assertEquals("Airbag", song.getTitle());
+                } else {
+                    assertNull(song); //no content
+                }
+
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+
+        signal.await(30, TimeUnit.SECONDS);
+
     }
 
     public void testGetFeatured() throws Throwable {
@@ -52,31 +70,50 @@ public class SongsAPITest extends HummTest {
         int offset = 0;
         String genre = null;
 
-        HummMultipleResult<Song> result = humm.getSongs().getFeatured(limit, offset, genre);
+        final CountDownLatch signal = new CountDownLatch(1);
 
-        if (result != null) {
-            assertEquals("ok", result.getStatus_response());
-        } else {
-            assertNull(result); //no content
-        }
+        humm.getSongs().getFeatured(limit, offset, genre, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                List<Song> songList = (List) result;
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+
+        signal.await(30, TimeUnit.SECONDS);
+
     }
 
     public void testPopular() throws Throwable {
 
         final HummAPI humm = HummAPI.getInstance();
         doLogin();
-        int limit = 10;
+        final int limit = 10;
         int offset = 0;
         String genre = null;
 
-        HummMultipleResult<Song> result = humm.getSongs().getPopular(limit, offset, genre);
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getSongs().getPopular(limit, offset, genre, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                List<Song> songList = (List) result;
+                assertEquals(limit, songList.size());
+                signal.countDown();
+            }
 
-        if (result != null) {
-            assertEquals("ok", result.getStatus_response());
-            assertEquals(10, result.getData_response().size());
-        } else {
-            assertNull(result); //no content
-        }
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+
+        signal.await(30, TimeUnit.SECONDS);
+
     }
 
 
@@ -84,18 +121,26 @@ public class SongsAPITest extends HummTest {
 
         final HummAPI humm = HummAPI.getInstance();
         doLogin();
-        int limit = 10;
+        final int limit = 10;
         int offset = 0;
         String genre = null;
 
-        HummMultipleResult<Song> result = humm.getSongs().getRecent(limit, offset, genre);
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getSongs().getRecent(limit, offset, genre, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                List<Song> songList = (List) result;
+                assertEquals(limit, songList.size());
+                signal.countDown();
+            }
 
-        if (result != null) {
-            assertEquals("ok", result.getStatus_response());
-            assertEquals(10, result.getData_response().size());
-        } else {
-            assertNull(result); //no content
-        }
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
     }
 
     public void testSearch() throws Throwable {
@@ -107,14 +152,21 @@ public class SongsAPITest extends HummTest {
         int offset = 0;
         String songtype = null;
 
-        HummMultipleResult<Song> result = humm.getSongs().search(keyword, limit, offset, songtype);
+        final CountDownLatch signal = new CountDownLatch(1);
 
-        if (result != null) {
-            assertEquals("ok", result.getStatus_response());
-            assertEquals(10, result.getData_response().size());
-        } else {
-            assertNull(result); //no content
-        }
+        humm.getSongs().search(keyword, limit, offset, songtype, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
     }
 
 
@@ -125,14 +177,22 @@ public class SongsAPITest extends HummTest {
         String idSong = "557ecbf86a64fc1b8bed533f"; //song2
         int limit = 0;
 
-        HummMultipleResult<Playlist> result = humm.getSongs().appearsIn(idSong, limit);
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getSongs().appearsIn(idSong, limit, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                List<PlaylistOwnerHashMap> playlist = (List) result;
 
-        if (result != null) {
-            assertEquals("ok", result.getStatus_response());
-//            assertEquals(10, result.getData_response().size());
-        } else {
-            assertNull(result); //no content
-        }
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
     }
 
     public void testGetSimilar() throws Throwable {
@@ -142,14 +202,23 @@ public class SongsAPITest extends HummTest {
         String idSong = "557ecbf86a64fc1b8bed533f"; //song2
         int offset = 0;
 
-        HummMultipleResult<Song> result = humm.getSongs().getSimilar(idSong, offset);
+        final CountDownLatch signal = new CountDownLatch(1);
 
-        if (result != null) {
-            assertEquals("ok", result.getStatus_response());
-//            assertEquals(10, result.getData_response().size());
-        } else {
-            assertNull(result); //no content
-        }
+        humm.getSongs().getSimilar(idSong, offset, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                List<Song> songList = (List) result;
+
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
     }
 
 }
