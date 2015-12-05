@@ -24,7 +24,7 @@ and include it into your /libs directory on your project.
        }
     }
 
-and compile the library
+and compile the library (inside the dependencies block)
 
     compile(name:'myhumm-android-sdk', ext:'aar')
 
