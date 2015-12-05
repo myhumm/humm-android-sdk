@@ -97,13 +97,17 @@ public class HummAPI {
             @Override
             public void actionFinished(Object result) {
                 HummSingleResult<LoginInfo> login = (HummSingleResult<LoginInfo>) result;
-                if (login == null || login.getData_response() == null || login.getData_response().getAccess_token() == null) {
+                if ((login == null) || (login.getData_response() == null) || (login.getData_response().getAccess_token() == null)) {
                     listener.onError(new HummException("login failed"));
                 }
 
-                updateLoginData(login.getData_response());
-
-                listener.actionFinished(login.getData_response());
+                if (login != null && login.getData_response() != null) {
+                    updateLoginData(login.getData_response());
+                    listener.actionFinished(login.getData_response());
+                }
+                else {
+                    listener.onError(new HummException("login failed"));
+                }
 
             }
 
@@ -178,9 +182,11 @@ public class HummAPI {
     }
 
     private static void updateLoginData(LoginInfo loginInfo) {
-        token = loginInfo.getAccess_token();
-        refresh_token = loginInfo.getRefresh_token();
-        token_expires = loginInfo.getExpires_in();
+        if (loginInfo != null) {
+            token = loginInfo.getAccess_token();
+            refresh_token = loginInfo.getRefresh_token();
+            token_expires = loginInfo.getExpires_in();
+        }
     }
 
     /**

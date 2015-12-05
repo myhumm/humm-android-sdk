@@ -398,7 +398,12 @@ public class ArtistAPITest extends HummTest {
             @Override
             public void actionFinished(Object result) {
                 User user = (User) result;
-                assertEquals("delete100", user.getFirstName());
+                if (user != null) {
+                    assertEquals("delete100", user.getFirstName());
+                }
+                else {
+                    assertNull(user);
+                }
                 signal.countDown();
             }
 
