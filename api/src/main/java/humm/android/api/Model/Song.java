@@ -188,6 +188,8 @@ public class Song extends Humm implements Parcelable {
         dest.writeList(artists);
         dest.writeList(playlists);
         dest.writeMap(urls);
+        dest.writeMap(foreign_ids);
+        dest.writeMap(stats);
     }
 
     public static final Parcelable.Creator<Song> CREATOR
@@ -212,6 +214,10 @@ public class Song extends Humm implements Parcelable {
         in.readList(playlists, null);
         urls = new HashMap();
         in.readMap(urls, null);
+        foreign_ids = new HashMap<String, String>();
+        in.readMap(foreign_ids, null);
+        stats = new HashMap<String, String>();
+        in.readMap(stats, null);
     }
 
 }
