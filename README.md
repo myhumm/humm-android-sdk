@@ -12,7 +12,7 @@ The sdk uses Gson library.
 
 	 compile 'com.google.code.gson:gson:2.3.1'
  
-2) Download the skd library aar from https://cdn.rawgit.com/myhumm/humm-android-sdk/master/binaries/myhumm-android-sdk-002.aar
+2) Download the skd library aar from https://cdn.rawgit.com/myhumm/humm-android-sdk/master/binaries/myhumm-android-sdk.aar
 
 and include it into your /libs directory on your project.
 
