@@ -469,6 +469,7 @@ public class SongsAPI extends HummAPI {
                 return result;
             }
 
+            parameters.put("keyword", keyword);
 
             if (limit > 0) {
                 parameters.put("limit", limit);
