@@ -1,5 +1,29 @@
 apply plugin: 'com.android.library'
 
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'humm-sdk'
+
+    publishedGroupId = 'humm.android.api'
+    libraryName = 'Humm SDK'
+    artifact = 'humm-sdk'
+
+    libraryDescription = 'SDK for humm API'
+
+    siteUrl = 'https://github.com/myhumm/humm-android-sdk'
+    gitUrl = 'https://github.com/myhumm/humm-android-sdk.git'
+
+    libraryVersion = '0.0.1'
+
+    developerId = 'josealonsogarcia'
+    developerName = 'Jose Alonso Garcia'
+    developerEmail = 'josealonsogarcia@gmail.com'
+
+    licenseName = 'MIT license'
+    licenseUrl = 'https://opensource.org/licenses/MIT'
+    allLicenses = ["MIT"]
+}
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.1"
@@ -23,6 +47,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.google.code.gson:gson:2.3.1'
-
     androidTestCompile 'junit:junit:4.12'
 }
+
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
