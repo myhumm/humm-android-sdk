@@ -1,9 +1,35 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
+version = "0.0.6"
+
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'humm-sdk'
+
+    publishedGroupId = 'humm.android.api'
+    libraryName = 'humm-sdk'
+    artifact = 'humm-sdk'
+
+    libraryDescription = 'humm skd for humm api'
+
+    siteUrl = 'https://github.com/myhumm/humm-android-sdk'
+    gitUrl = 'https://github.com/myhumm/humm-android-sdk.git'
+
+    libraryVersion = version
+
+    developerId = 'josealonsogarcia'
+    developerName = 'Jose Alonso Garcia'
+    developerEmail = 'josealonsogarcia@gmail.com'
+
+    licenseName = 'MIT'
+    licenseUrl = 'http://www.apache.org/licenses/MIT.txt'
+    allLicenses = ["MIT"]
+}
 bintray {
     user = properties.getProperty("bintray.user")
     key = properties.getProperty("bintray.apikey")
@@ -13,9 +39,9 @@ bintray {
         name = 'humm-sdk'
 
         version {
-            name = '0.0.2'
+            name = version
             desc = 'First version'
-            vcsTag = '0.0.2'
+            vcsTag = version
         }
 
         licenses = ['MIT']
@@ -24,6 +50,17 @@ bintray {
     }
     configurations = ['archives']
 }
+
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = ''
+}
+
+artifacts {
+    archives sourcesJar
+}
+
 
 android {
     compileSdkVersion 23
