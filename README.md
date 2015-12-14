@@ -8,26 +8,9 @@ The sdk uses Gson library.
 
 #### Installation
 
-1) First of all, add the Gson library dependency adding this line into your gradle file:
+Add the next dependency into your app's graddle config file:
 
-	 compile 'com.google.code.gson:gson:2.3.1'
- 
-2) Download the skd library aar from https://cdn.rawgit.com/myhumm/humm-android-sdk/master/binaries/myhumm-android-sdk.aar
-
-and include it into your /libs directory on your project.
-
-3) Don't forget include the dependency into the gradle file. For this, we need to add the /libs repository outside the dependencies block
-
-    repositories {
-       flatDir {
-        dirs 'libs'
-       }
-    }
-
-and compile the library (inside the dependencies block)
-
-    compile(name:'myhumm-android-sdk-001', ext:'aar')
-
+    compile 'android:humm-sdk:0.1.1@aar'
 
 #### Usage
 
