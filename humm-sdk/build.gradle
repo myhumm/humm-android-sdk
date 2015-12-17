@@ -5,7 +5,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
-def versionNumber = "0.1.1"
+def versionNumber = "0.1.2"
 
 ext {
     bintrayRepo = 'maven'

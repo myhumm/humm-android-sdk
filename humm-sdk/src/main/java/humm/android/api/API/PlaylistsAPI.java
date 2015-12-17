@@ -697,7 +697,7 @@ public class PlaylistsAPI extends HummAPI {
             parameters.put("sid", idSong);
             parameters.put("position", position);
 
-            Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/playlists/" + idPlaylist + "/songs", parameters, false, token);
+            Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/playlists/" + idPlaylist + "/songs", parameters, true, token);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
