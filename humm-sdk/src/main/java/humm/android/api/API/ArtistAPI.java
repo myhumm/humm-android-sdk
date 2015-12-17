@@ -20,6 +20,8 @@ import humm.android.api.HummTask;
 import humm.android.api.Model.Artist;
 import humm.android.api.Model.HummMultipleResult;
 import humm.android.api.Model.HummSingleResult;
+import humm.android.api.Model.PlaylistOwnerHashMap;
+import humm.android.api.Model.PlaylistOwnerList;
 import humm.android.api.Model.Song;
 import humm.android.api.Model.User;
 import humm.android.api.OnActionFinishedListener;
@@ -322,8 +324,8 @@ public class ArtistAPI extends HummAPI {
      * @param limit    Number of returned results (20 by default)
      * @param offset   Offset results by said number (0 by default)
      */
-    public HummMultipleResult<Song> getPlaylists(String idArtist, int limit, int offset) {
-        HummMultipleResult<Song> result = new HummMultipleResult<>();
+    public HummMultipleResult<PlaylistOwnerList> getPlaylists(String idArtist, int limit, int offset) {
+        HummMultipleResult<PlaylistOwnerList> result = new HummMultipleResult<>();
         try {
 
             if (idArtist == null) {
@@ -336,7 +338,7 @@ public class ArtistAPI extends HummAPI {
 
             HummAPI.getInstance().updateUserToken();
 
-            Type listType = new TypeToken<HummMultipleResult<Song>>() {
+            Type listType = new TypeToken<HummMultipleResult<PlaylistOwnerList>>() {
             }.getType();
 
             JSONObject parameters = new JSONObject();
@@ -386,7 +388,7 @@ public class ArtistAPI extends HummAPI {
      */
     public void getPlaylists(final String idArtist, final int limit, final int offset, final OnActionFinishedListener listener) {
 
-        new HummTask<HummMultipleResult<Song>>(new HummTask.Job() {
+        new HummTask<HummMultipleResult<PlaylistOwnerList>>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
                 return getPlaylists(idArtist, limit, offset);
@@ -394,7 +396,7 @@ public class ArtistAPI extends HummAPI {
 
             @Override
             public void onComplete(Object object) {
-                HummMultipleResult<Song> result = (HummMultipleResult<Song>) object;
+                HummMultipleResult<PlaylistOwnerList> result = (HummMultipleResult<PlaylistOwnerList>) object;
                 if (result == null)
                 {
                     listener.actionFinished(null);
