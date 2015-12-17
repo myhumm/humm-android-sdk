@@ -307,7 +307,7 @@ public class UserAPITest extends HummTest {
         humm.getUser().getFollows(idUser, limit, offset, new OnActionFinishedListener() {
             @Override
             public void actionFinished(Object result) {
-                List<User> userList = (List) result;
+                List<Artist> userList = (List) result;
                 assertEquals(limit, userList.size());
                 signal.countDown();
             }

@@ -1242,7 +1242,7 @@ public class UserAPI extends HummAPI {
 //    }
 
     /**
-     * Get a list of recommended playlists / albums; returns a list of playlist / album objects
+     * Get a list of the users a user is following; returns a list of user objects for a given id
      *
      * @param idUser   Unique identifier of user
      * @param limit    Number of returned results (no used)
@@ -1252,7 +1252,7 @@ public class UserAPI extends HummAPI {
      *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
      */
     public void getFollows(final String idUser, final int limit, final int offset, final OnActionFinishedListener listener) {
-        new HummTask<HummMultipleResult<User>>(new HummTask.Job() {
+        new HummTask<HummMultipleResult<Artist>>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
                 return getFollows(idUser, limit, offset);
@@ -1260,7 +1260,7 @@ public class UserAPI extends HummAPI {
 
             @Override
             public void onComplete(Object object) {
-                HummMultipleResult<User> result = (HummMultipleResult<User>) object;
+                HummMultipleResult<Artist> result = (HummMultipleResult<Artist>) object;
 
                 if (result == null) {
                     listener.actionFinished(null);
@@ -1282,18 +1282,18 @@ public class UserAPI extends HummAPI {
     }
 
     /**
-     * Get a list of recommended playlists / albums; returns a list of playlist / album objects
+     * Get a list of the users a user is following; returns a list of user objects for a given id
      *
      * @param idUser Unique identifier of user
      * @param limit  Number of returned results (no used)
      * @param offset Offset results by said number (0 by default)
      */
-    public HummMultipleResult<User> getFollows(String idUser, int limit, int offset) {
+    public HummMultipleResult<Artist> getFollows(String idUser, int limit, int offset) {
 
-        HummMultipleResult<User> result = new HummMultipleResult<>();
+        HummMultipleResult<Artist> result = new HummMultipleResult<>();
         try {
 
-            Type listType = new TypeToken<HummMultipleResult<User>>() {
+            Type listType = new TypeToken<HummMultipleResult<Artist>>() {
             }.getType();
 
             if (idUser == null) {
