@@ -20,7 +20,7 @@ public class PlaylistOwnerList extends Playlist {
     }
 
     @Override
-    String getOwnerAvatar() {
+    public String getOwnerAvatar() {
         if (this.owner != null && this.owner.get(0) != null && this.owner.get(0).get("avatar") != null) {
             return this.owner.get(0).get("avatar");
         }
@@ -29,7 +29,7 @@ public class PlaylistOwnerList extends Playlist {
     }
 
     @Override
-    String getOwnerName() {
+    public String getOwnerName() {
         if (this.owner != null && this.owner.get(0) != null && this.owner.get(0).get("name") != null) {
             return this.owner.get(0).get("name");
         }
@@ -37,7 +37,7 @@ public class PlaylistOwnerList extends Playlist {
     }
 
     @Override
-    String getOwnerUid() {
+    public String getOwnerUid() {
         if (this.owner != null && this.owner.get(0) != null && this.owner.get(0).get("uid") != null) {
             return this.owner.get(0).get("uid");
         }

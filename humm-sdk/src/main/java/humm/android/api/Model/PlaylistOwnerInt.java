@@ -18,17 +18,17 @@ public class PlaylistOwnerInt extends Playlist {
     }
 
     @Override
-    String getOwnerAvatar() {
+    public String getOwnerAvatar() {
         return null;
     }
 
     @Override
-    String getOwnerName() {
+    public String getOwnerName() {
         return null;
     }
 
     @Override
-    String getOwnerUid() {
+    public String getOwnerUid() {
         return null;
     }
 }

@@ -47,9 +47,9 @@ public abstract class Playlist extends Humm {
         this.stats = stats;
     }
 
-    abstract String getOwnerAvatar();
-    abstract String getOwnerName();
-    abstract String getOwnerUid();
+    public abstract String getOwnerAvatar();
+    public abstract String getOwnerName();
+    public abstract String getOwnerUid();
 
 //    public  String getOwnerAvatar() {
 //        if (this.owner != null && this.owner.get("avatar") != null) {
