@@ -1619,7 +1619,7 @@ public class UserAPI extends HummAPI {
      *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
      */
     public void putGenres(final ArrayList<String> likes, final ArrayList<String> dislikes, final OnActionFinishedListener listener) {
-        new HummTask<HummMultipleResult<PlaylistOwnerInt>>(new HummTask.Job() {
+        new HummTask<HummSingleResult<LoginInfo>>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
                 return putGenres(likes, dislikes);
@@ -1627,7 +1627,7 @@ public class UserAPI extends HummAPI {
 
             @Override
             public void onComplete(Object object) {
-                HummMultipleResult<PlaylistOwnerInt> result = (HummMultipleResult<PlaylistOwnerInt>) object;
+                HummSingleResult<LoginInfo> result = (HummSingleResult<LoginInfo>) object;
 
                 if (result == null) {
                     listener.actionFinished(null);
@@ -1654,12 +1654,12 @@ public class UserAPI extends HummAPI {
      * @param likes    Array of Strings with genres that user likes
      * @param dislikes Array of Strings with genres that user likes
      */
-    public HummMultipleResult<PlaylistOwnerInt> putGenres(ArrayList<String> likes, ArrayList<String> dislikes) {
+    public HummSingleResult<LoginInfo> putGenres(ArrayList<String> likes, ArrayList<String> dislikes) {
 
-        HummMultipleResult<PlaylistOwnerInt> result = new HummMultipleResult<>();
+        HummSingleResult<LoginInfo> result = new HummSingleResult<>();
         try {
 
-            Type listType = new TypeToken<HummMultipleResult<PlaylistOwnerInt>>() {
+            Type listType = new TypeToken<HummSingleResult<LoginInfo>>() {
             }.getType();
 
             if (likes == null) {
