@@ -154,6 +154,29 @@ public class UserAPITest extends HummTest {
 
     }
 
+    public void testGetFavourites() throws Throwable {
+
+        final HummAPI humm = HummAPI.getInstance();
+        doLogin();
+        String idUser = "5661783496a4f4e521fe3f65";
+
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getUser().getFavourites(idUser, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                List<Song> songList = (List) result;
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
+    }
+
     public void testAddFollower() throws Throwable {
 
         final HummAPI humm = HummAPI.getInstance();
@@ -269,6 +292,31 @@ public class UserAPITest extends HummTest {
                 assertEquals("user1", user.getFirstName());
                 assertEquals("test", user.getLastName());
 
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
+    }
+
+    public void testGetSubscriptions() throws Throwable {
+
+        final HummAPI humm = HummAPI.getInstance();
+        doLogin();
+        String idUser = "5661783496a4f4e521fe3f65";
+
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getUser().getSubscriptions(idUser, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                List<PlaylistOwnerList> playlistOwnerLists = (List) result;
+
+                assertEquals(3, playlistOwnerLists.size());
                 signal.countDown();
             }
 

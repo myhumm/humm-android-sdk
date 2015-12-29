@@ -670,6 +670,94 @@ public class UserAPI extends HummAPI {
     }
 
     /**
+     * Get a list of songs user favourites
+     *
+     * @param idUser   Unique identifier of user
+     * @param listener called when action is completed or when happens a error. The parameter of onComplete method is
+     *                 a list of <code>Song</code>.
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
+    public void getFavourites(final String idUser, final OnActionFinishedListener listener) {
+        new HummTask<HummSingleResult<Song>>(new HummTask.Job() {
+            @Override
+            public Object onStart() throws Exception {
+                return getFavourites(idUser);
+            }
+
+            @Override
+            public void onComplete(Object object) {
+                HummMultipleResult<Song> result = (HummMultipleResult<Song>) object;
+
+                if (result == null) {
+                    listener.actionFinished(null);
+                    return;
+                }
+
+                if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
+                    listener.actionFinished(result.getData_response());
+                } else {
+                    listener.onError(new HummException(result.getError_response()));
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                listener.onError(new HummException(e.getLocalizedMessage()));
+            }
+        }).start();
+    }
+
+    /**
+     * Get a list of songs user favourites
+     *
+     * @param idUser Unique identifier of user
+     */
+    public HummMultipleResult<Song> getFavourites(String idUser) {
+
+        HummMultipleResult<Song> result = new HummMultipleResult<>();
+        try {
+
+            Type listType = new TypeToken<HummMultipleResult<Song>>() {
+            }.getType();
+
+            if (idUser == null) {
+                result.setStatus_response(HttpURLConnectionHelper.KO);
+                result.setError_response("id parameter is mandatory");
+
+                return result;
+            }
+
+            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/users/" + idUser + "/favourites", null, token);
+            result = new Gson().fromJson(reader, listType);
+
+        } catch (IOException ex) {
+            // HttpUrlConnection will throw an IOException if any 4XX
+            // response is sent. If we request the status again, this
+            // time the internal status will be properly set, and we'll be
+            // able to retrieve it.
+            Log.e("Debug", "error " + ex.getMessage(), ex);
+            //android bug with 401
+
+            result.setStatus_response(HttpURLConnectionHelper.KO);
+            result.setError_response("Unauthorized");
+
+        } catch (JSONException e) {
+            Log.e("Debug", "error " + e.getMessage(), e);
+
+            result.setStatus_response(HttpURLConnectionHelper.KO);
+            result.setError_response("error in params");
+        } catch (Exception e) {
+            Log.e("ERROR", "error " + e.getMessage(), e);
+
+            result.setStatus_response(HttpURLConnectionHelper.KO);
+            result.setError_response("sync error");
+
+        }
+
+        return result;
+    }
+
+    /**
      * Add song to current user favourites; returns a song object
      *
      * @param idUser   Unique identifier of user
@@ -1147,6 +1235,90 @@ public class UserAPI extends HummAPI {
             }
 
             Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/users/" + idUser, null, token);
+            result = new Gson().fromJson(reader, listType);
+
+        } catch (IOException ex) {
+            // HttpUrlConnection will throw an IOException if any 4XX
+            // response is sent. If we request the status again, this
+            // time the internal status will be properly set, and we'll be
+            // able to retrieve it.
+            Log.e("Debug", "error " + ex.getMessage(), ex);
+            //android bug with 401
+            result.setStatus_response(HttpURLConnectionHelper.KO);
+            result.setError_response("Unauthorized");
+
+        } catch (JSONException e) {
+            Log.e("Debug", "error " + e.getMessage(), e);
+            result.setStatus_response(HttpURLConnectionHelper.KO);
+            result.setError_response("error in params");
+        } catch (Exception e) {
+            Log.e("ERROR", "error " + e.getMessage(), e);
+            result.setStatus_response(HttpURLConnectionHelper.KO);
+            result.setError_response("sync error");
+        }
+
+        return result;
+    }
+
+    /**
+     * Get users subscriptions; returns a user object for a given id
+     *
+     * @param idUser   Unique identifier of user
+     * @param listener called when action is completed or when happens a error. The parameter of onComplete method is
+     *                 a <code>User</code>.
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
+    public void getSubscriptions(final String idUser, final OnActionFinishedListener listener) {
+        new HummTask<HummMultipleResult<PlaylistOwnerList>>(new HummTask.Job() {
+            @Override
+            public Object onStart() throws Exception {
+                return getSubscriptions(idUser);
+            }
+
+            @Override
+            public void onComplete(Object object) {
+                HummMultipleResult<PlaylistOwnerList> result = (HummMultipleResult<PlaylistOwnerList>) object;
+
+                if (result == null) {
+                    listener.actionFinished(null);
+                    return;
+                }
+
+                if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
+                    listener.actionFinished(result.getData_response());
+                } else {
+                    listener.onError(new HummException(result.getError_response()));
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                listener.onError(new HummException(e.getLocalizedMessage()));
+            }
+        }).start();
+    }
+
+    /**
+     * Get a user; returns a user object for a given id
+     *
+     * @param idUser Unique identifier of user
+     */
+    public HummMultipleResult<PlaylistOwnerList> getSubscriptions(String idUser) {
+
+        HummMultipleResult<PlaylistOwnerList> result = new HummMultipleResult<>();
+        try {
+
+            Type listType = new TypeToken<HummMultipleResult<PlaylistOwnerList>>() {
+            }.getType();
+
+            if (idUser == null) {
+                result.setStatus_response(HttpURLConnectionHelper.KO);
+                result.setError_response("id parameter is mandatory");
+
+                return result;
+            }
+
+            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/users/" + idUser + "/subscriptions", null, token);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {

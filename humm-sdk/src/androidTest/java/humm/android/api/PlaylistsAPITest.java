@@ -80,6 +80,32 @@ public class PlaylistsAPITest extends HummTest {
 
     }
 
+    public void testDelete() throws Throwable {
+
+        final HummAPI humm = HummAPI.getInstance();
+        doLogin();
+
+        String idPlaylist = "5682482d8cc93b736de502f9";
+
+        final CountDownLatch signal = new CountDownLatch(1);
+
+        humm.getPlaylists().delete(idPlaylist, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                PlaylistOwnerHashMap playlist = (PlaylistOwnerHashMap) result;
+                assertEquals("New Playlist", playlist.getTitle());
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
+    }
+
     public void testGetFeatured() throws Throwable {
 
 

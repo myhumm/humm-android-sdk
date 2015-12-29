@@ -94,6 +94,9 @@ public class HttpURLConnectionHelper {
 
         if (getParams) {
             host = host + getParams(params);
+            if (auth_token != null) {
+                host = host + "?auth=" + auth_token;
+            }
         }
         URL url = new URL(host);
 
@@ -104,7 +107,9 @@ public class HttpURLConnectionHelper {
         conn.setRequestMethod("POST");
         conn.setDoInput(true);
         conn.setDoOutput(true);
-        conn.setChunkedStreamingMode(0); // Use default chunk size
+//        conn.setChunkedStreamingMode(0); // Use default chunk size
+
+        Log.d("HTTPURLConnection", host);
 
 //        conn.setRequestProperty("Accept", "application/json");
 //        conn.setRequestProperty("Content-Type", "x-www-form-urlencoded");
