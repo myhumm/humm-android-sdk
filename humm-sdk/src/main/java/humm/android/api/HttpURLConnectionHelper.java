@@ -35,6 +35,7 @@ public class HttpURLConnectionHelper {
         Reader reader = null;
         host = host + getParams(params);
 
+//        Log.d("DEBUG", host);
         URL url = new URL(host);
         conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
@@ -65,22 +66,34 @@ public class HttpURLConnectionHelper {
                 String value = "";
                 if (params.get(key) instanceof String) {
                     value = (String) params.get(key);
+                    value = Uri.encode(value);
                 } else if (params.get(key) instanceof ArrayList) {
                     ArrayList<String> paramsArray = (ArrayList<String>) params.get(key);
 
                     String subvalue = "";
+                    int i = 0;
                     for (String paramArray : paramsArray) {
-                        subvalue = subvalue + paramArray + ",";
+                        if (i == paramsArray.size() - 1)
+                        {
+                            subvalue = subvalue + paramArray;
+                        }
+                        else {
+                            subvalue = subvalue + paramArray + "+";
+                        }
+                        i++;
                     }
                     value = subvalue;
 
                 } else if (params.get(key) instanceof Boolean) {
                     Boolean bool = (Boolean) params.get(key);
                     value = bool ? "true" : "false";
+                    value = Uri.encode(value);
+
                 } else {
                     value = Integer.valueOf((int) params.get(key)).toString();
+                    value = Uri.encode(value);
                 }
-                value = Uri.encode(value);
+//                value = Uri.encode(value);
                 String getParam = allGetParams.length() > 1 ? "&" + key + "=" + value : "?" + key + "=" + value;
                 allGetParams = allGetParams + getParam;
             }
@@ -166,9 +179,6 @@ public class HttpURLConnectionHelper {
             out.close();
 
         }
-
-//        conn.setRequestProperty("Accept", "application/json");
-//        conn.setRequestProperty("Content-Type", "application/json");
 
         InputStream in = new BufferedInputStream(conn.getInputStream());
         Reader reader = new InputStreamReader(in);

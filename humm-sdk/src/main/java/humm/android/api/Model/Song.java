@@ -166,7 +166,7 @@ public class Song extends Humm implements Parcelable {
     }
 
     public String getPlaylistCover() {
-        if (this.playlists != null && playlists.get(0) != null) {
+        if (this.playlists != null && this.playlists.size() > 0 &&  playlists.get(0) != null) {
             String idPlaylist = (String) playlists.get(0).get("pid");
 
 //            return "http://wave.livingindietv.com/images/playlist?id=" + idPlaylist + "&size=thumb";

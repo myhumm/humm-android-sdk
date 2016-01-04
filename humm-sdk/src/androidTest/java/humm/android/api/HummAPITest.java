@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import humm.android.api.Model.LoginInfo;
 import humm.android.api.Model.Song;
 import humm.android.api.Model.User;
 
@@ -23,17 +24,20 @@ public class HummAPITest extends HummTest {
     public void testSignup() throws Throwable {
         final HummAPI humm = HummAPI.getInstance();
 
-        final String username = "deleteme110";
-        final String password = "deleteme110";
-        final String email = "deleteme110@delete.com";
+        final String username = "deleteme111";
+        final String password = "deleteme111";
+        final String email = "deleteme111@delete.com";
         final String firstname = "delete";
         final String lastname = "me";
+
+        final CountDownLatch signal = new CountDownLatch(1);
 
         humm.signup(username, password, email, firstname, lastname, new OnActionFinishedListener() {
             @Override
             public void actionFinished(Object result) {
-                User user = (User) result;
-                assertEquals("deleteme100", user.getUsername());
+                LoginInfo login = (LoginInfo) result;
+//                assertEquals("deleteme100", login.);
+                signal.countDown();
             }
 
             @Override
@@ -42,6 +46,7 @@ public class HummAPITest extends HummTest {
             }
         });
 
+        signal.await(30, TimeUnit.SECONDS);
     }
 
     public void testRadio() throws Throwable {
@@ -50,7 +55,9 @@ public class HummAPITest extends HummTest {
 
         final int limit = 10;
         List<String> genres = new ArrayList<>();
-        List<String> moods = new ArrayList<>();
+        genres.add("pop");
+        genres.add("rock");
+        List<String> moods = null;
         boolean discovery = false;
         boolean own = false;
 

@@ -1,5 +1,6 @@
 package humm.android.api;
 
+import android.net.Uri;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -11,6 +12,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,6 +23,7 @@ import humm.android.api.API.UserAPI;
 import humm.android.api.Model.HummMultipleResult;
 import humm.android.api.Model.HummSingleResult;
 import humm.android.api.Model.LoginInfo;
+import humm.android.api.Model.PlaylistOwnerList;
 import humm.android.api.Model.Song;
 
 /**
@@ -104,8 +107,7 @@ public class HummAPI {
                 if (login != null && login.getData_response() != null) {
                     updateLoginData(login.getData_response());
                     listener.actionFinished(login.getData_response());
-                }
-                else {
+                } else {
                     listener.onError(new HummException("login failed"));
                 }
 
@@ -134,22 +136,27 @@ public class HummAPI {
      */
     public void signup(String username, String password, String email, String firstname, String lastname, final OnActionFinishedListener listener) {
 
-        HummSingleResult<LoginInfo> login = getUser().doSignup(username, password, email, firstname, lastname);
-
-        if (login == null || login.getData_response() == null || login.getData_response().getAccess_token() == null) {
-            return;
-        }
-
+//        HummSingleResult<LoginInfo> login = getUser().doSignup(username, password, email, firstname, lastname);
+//
+//        if (login == null || login.getData_response() == null || login.getData_response().getAccess_token() == null) {
+//            return;
+//        }
+//
         getUser().doSignup(username, password, email, firstname, lastname, new OnActionFinishedListener() {
             @Override
             public void actionFinished(Object result) {
                 HummSingleResult<LoginInfo> login = (HummSingleResult<LoginInfo>) result;
-                if (login == null || login.getData_response() == null || login.getData_response().getAccess_token() == null) {
-                    return;
+
+                if ((login == null) || (login.getData_response() == null) || (login.getData_response().getAccess_token() == null)) {
+                    listener.onError(new HummException("signup failed"));
                 }
 
-                updateLoginData(login.getData_response());
-                listener.actionFinished(login.getData_response());
+                if (login != null && login.getData_response() != null) {
+                    updateLoginData(login.getData_response());
+                    listener.actionFinished(login.getData_response());
+                } else {
+                    listener.onError(new HummException("signup failed"));
+                }
 
             }
 
@@ -159,7 +166,21 @@ public class HummAPI {
             }
         });
 
-        updateLoginData(login.getData_response());
+//        getUser().doSignup(username, password, email, firstname, lastname, new OnActionFinishedListener() {
+//            @Override
+//            public void actionFinished(Object result) {
+//                HummSingleResult<LoginInfo> login = (HummSingleResult<LoginInfo>) result;
+//
+//                updateLoginData(login.getData_response());
+//
+//            }
+//
+//            @Override
+//            public void onError(Exception e) {
+//                listener.onError(e);
+//            }
+//        });
+
 
     }
 
@@ -210,14 +231,27 @@ public class HummAPI {
 
             @Override
             public void onComplete(Object object) {
-                listener.actionFinished(object);
+
+                HummMultipleResult<Song> result = (HummMultipleResult<Song>) object;
+
+                if (result == null) {
+                    listener.actionFinished(null);
+                    return;
+                }
+
+                if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
+                    listener.actionFinished(result.getData_response());
+                } else {
+                    listener.onError(new HummException(result.getError_response()));
+                }
+
             }
 
             @Override
             public void onError(Exception e) {
                 listener.onError(new HummException(e.getLocalizedMessage()));
             }
-        });
+        }).start();
     }
 
     /**
@@ -243,10 +277,18 @@ public class HummAPI {
                 parameters.put("limit", limit);
             }
             if (genres != null) {
-                parameters.put("genres", genres);
+                List<String> genresEncoded = new ArrayList<>();
+                for (String genre : genres) {
+                    genresEncoded.add(Uri.encode(genre));
+                }
+                parameters.put("genres", genresEncoded);
             }
             if (moods != null) {
-                parameters.put("moods", moods);
+                List<String> moodsEncoded = new ArrayList<>();
+                for (String mood : moods) {
+                    moodsEncoded.add(Uri.encode(mood));
+                }
+                parameters.put("moods", moodsEncoded);
             }
             parameters.put("discovery", discovery);
             parameters.put("own", own);

@@ -1,5 +1,6 @@
 package humm.android.api;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -185,6 +186,35 @@ public class UserAPITest extends HummTest {
 
         final CountDownLatch signal = new CountDownLatch(1);
         humm.getUser().addFollows(idUser, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                User user = (User) result;
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
+    }
+
+    public void testPutGenres() throws Throwable {
+
+        final HummAPI humm = HummAPI.getInstance();
+        doLogin();
+
+        ArrayList<String> likes = new ArrayList<>();
+        likes.add("rock");
+        likes.add("pop");
+
+        ArrayList<String> dislikes = new ArrayList<>();
+        dislikes.add("metal");
+
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getUser().putGenres(likes, dislikes, new OnActionFinishedListener() {
             @Override
             public void actionFinished(Object result) {
                 User user = (User) result;
