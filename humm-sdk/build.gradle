@@ -5,7 +5,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
-def versionNumber = "0.2.8"
+def versionNumber = "0.2.15"
 
 ext {
     bintrayRepo = 'maven'
@@ -15,7 +15,7 @@ ext {
     libraryName = 'humm-sdk'
     artifact = 'humm-sdk'
 
-    libraryDescription = 'humm skd for humm api'
+    libraryDescription = 'sdk for humm api'
 
     siteUrl = 'https://github.com/myhumm/humm-android-sdk'
     gitUrl = 'https://github.com/myhumm/humm-android-sdk.git'

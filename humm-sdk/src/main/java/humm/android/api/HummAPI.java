@@ -31,6 +31,9 @@ import humm.android.api.Model.Song;
  */
 public class HummAPI {
 
+    protected static boolean DEBUG = false;
+    protected static String TAG = "HUMM_API";
+
     private static HummAPI instance = null;
 
     protected static String clientId;
@@ -40,6 +43,11 @@ public class HummAPI {
     protected static String token;
     protected static String refresh_token;
     protected static int token_expires;
+
+    private static UserAPI userAPI = UserAPI.getInstance();
+    private static ArtistAPI artistAPI = ArtistAPI.getInstance();
+    private static PlaylistsAPI playlistsAPI = PlaylistsAPI.getInstance();
+    private static SongsAPI songsAPI = SongsAPI.getInstance();
 
     public static HummAPI getInstance() {
         if (instance == null) {
@@ -166,35 +174,32 @@ public class HummAPI {
             }
         });
 
-//        getUser().doSignup(username, password, email, firstname, lastname, new OnActionFinishedListener() {
-//            @Override
-//            public void actionFinished(Object result) {
-//                HummSingleResult<LoginInfo> login = (HummSingleResult<LoginInfo>) result;
-//
-//                updateLoginData(login.getData_response());
-//
-//            }
-//
-//            @Override
-//            public void onError(Exception e) {
-//                listener.onError(e);
-//            }
-//        });
-
-
     }
 
     public void updateUserToken() {
 
+        if (DEBUG) {
+            Log.d(TAG, "updateUserToken");
+        }
+
         int secondsNow = (int) (new Date().getTime() / 1000);
 
+        if (DEBUG) {
+            Log.d(TAG, "expires " + token_expires + "");
+            Log.d(TAG, "now " + secondsNow + "");
+            Log.d(TAG, "token" + token + "");
+        }
         if (secondsNow < token_expires) {
             //user is loged
             if (token != null) {
+                if (DEBUG) {
+                    Log.d(TAG, "Token valid");
+                }
                 return;
             }
         }
 
+        Log.d(TAG, "Token not valid, refresh it!");
         //we need refresh token
         HummSingleResult<LoginInfo> login = UserAPI.refreshToken();
 
@@ -203,10 +208,16 @@ public class HummAPI {
     }
 
     private static void updateLoginData(LoginInfo loginInfo) {
+
         if (loginInfo != null) {
             token = loginInfo.getAccess_token();
             refresh_token = loginInfo.getRefresh_token();
-            token_expires = loginInfo.getExpires_in();
+            token_expires = (int) (new Date().getTime() / 1000) + loginInfo.getExpires_in();
+        }
+        if (DEBUG) {
+            Log.d(TAG, "expires " + token_expires + "");
+            Log.d(TAG, "token" + token + "");
+            Log.d(TAG, "refresh" + refresh_token + "");
         }
     }
 
@@ -293,7 +304,7 @@ public class HummAPI {
             parameters.put("discovery", discovery);
             parameters.put("own", own);
 
-            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/radio", parameters, token);
+            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/radio", parameters, token, DEBUG);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
@@ -321,19 +332,31 @@ public class HummAPI {
 
 
     public ArtistAPI getArtist() {
-        return ArtistAPI.getInstance();
+//        return ArtistAPI.getInstance();
+        return artistAPI;
     }
 
     public UserAPI getUser() {
-        return UserAPI.getInstance();
+//        return UserAPI.getInstance();
+        return userAPI;
     }
 
     public SongsAPI getSongs() {
-        return SongsAPI.getInstance();
+        return songsAPI;
+//        return SongsAPI.getInstance();
     }
 
     public PlaylistsAPI getPlaylists() {
-        return PlaylistsAPI.getInstance();
+        return playlistsAPI;
+//        return PlaylistsAPI.getInstance();
+    }
+
+    public static boolean isDEBUG() {
+        return DEBUG;
+    }
+
+    public static void setDEBUG(boolean DEBUG) {
+        HummAPI.DEBUG = DEBUG;
     }
 
 }

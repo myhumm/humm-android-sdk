@@ -30,8 +30,6 @@ import humm.android.api.OnActionFinishedListener;
  * Created by josealonsogarcia on 23/11/15.
  */
 
-//TODO validate mandatory params
-
 public class ArtistAPI extends HummAPI {
 
     private static ArtistAPI instance = null;
@@ -109,7 +107,6 @@ public class ArtistAPI extends HummAPI {
                 return result;
             }
 
-
             HummAPI.getInstance().updateUserToken();
 
             JSONObject parameters = new JSONObject();
@@ -122,7 +119,7 @@ public class ArtistAPI extends HummAPI {
 
             Type listType = new TypeToken<HummSingleResult<Artist>>() {
             }.getType();
-            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists/" + idArtist, parameters, token);
+            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists/" + idArtist, parameters, token, DEBUG);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
@@ -211,7 +208,7 @@ public class ArtistAPI extends HummAPI {
 
             Type listType = new TypeToken<HummSingleResult<Artist>>() {
             }.getType();
-            Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/artists/" + idArtist + "/followers", null, true, token);
+            Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/artists/" + idArtist + "/followers", null, true, token, DEBUG);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
@@ -257,7 +254,7 @@ public class ArtistAPI extends HummAPI {
 
             Type listType = new TypeToken<HummSingleResult<User>>() {
             }.getType();
-            Reader reader = HttpURLConnectionHelper.deleteHttpConnection(endpoint + "/artists/" + idArtist + "/followers", null, token);
+            Reader reader = HttpURLConnectionHelper.deleteHttpConnection(endpoint + "/artists/" + idArtist + "/followers", null, token, DEBUG);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
@@ -349,7 +346,7 @@ public class ArtistAPI extends HummAPI {
                 parameters.put("offset", offset);
             }
 
-            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists/" + idArtist + "/playlists", parameters, token);
+            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists/" + idArtist + "/playlists", parameters, token, DEBUG);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
@@ -448,7 +445,7 @@ public class ArtistAPI extends HummAPI {
                 parameters.put("offset", offset);
             }
 
-            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists/" + idArtist + "/radio", parameters, token);
+            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists/" + idArtist + "/radio", parameters, token, DEBUG);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
@@ -547,7 +544,7 @@ public class ArtistAPI extends HummAPI {
                 parameters.put("offset", offset);
             }
 
-            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists/" + idArtist + "/similar", parameters, token);
+            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists/" + idArtist + "/similar", parameters, token, DEBUG);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
@@ -694,7 +691,7 @@ public class ArtistAPI extends HummAPI {
 
             Type listType = new TypeToken<HummMultipleResult<Artist>>() {
             }.getType();
-            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists", parameters, token);
+            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists", parameters, token, DEBUG);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
@@ -802,7 +799,7 @@ public class ArtistAPI extends HummAPI {
             if (songType != null) {
                 parameters.put("songtype", songType);
             }
-            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists/" + idArtist + "/topsongs", parameters, token);
+            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists/" + idArtist + "/topsongs", parameters, token, DEBUG);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
@@ -857,7 +854,7 @@ public class ArtistAPI extends HummAPI {
             if (genre != null) {
                 parameters.put("genre", genre);
             }
-            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists/featured", parameters, token);
+            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists/featured", parameters, token, DEBUG);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
@@ -950,7 +947,7 @@ public class ArtistAPI extends HummAPI {
             if (offset > 0) {
                 parameters.put("offset", offset);
             }
-            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists/popular", parameters, token);
+            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists/popular", parameters, token, DEBUG);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
@@ -1042,7 +1039,7 @@ public class ArtistAPI extends HummAPI {
             if (offset > 0) {
                 parameters.put("offset", offset);
             }
-            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists/recent", parameters, token);
+            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists/recent", parameters, token, DEBUG);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {

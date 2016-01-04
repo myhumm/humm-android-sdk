@@ -30,11 +30,14 @@ public class HttpURLConnectionHelper {
     public static final String OK = "ok";
     public static final String KO = "ko";
 
-    public static Reader getHttpConnection(String host, JSONObject params, String auth_token) throws IOException, JSONException {
+    public static Reader getHttpConnection(String host, JSONObject params, String auth_token, boolean debug) throws IOException, JSONException {
         HttpURLConnection conn = null;
         Reader reader = null;
         host = host + getParams(params);
 
+        if (debug) {
+            Log.d("HUMM_API", "GET petition to " + host);
+        }
 //        Log.d("DEBUG", host);
         URL url = new URL(host);
         conn = (HttpURLConnection) url.openConnection();
@@ -73,11 +76,9 @@ public class HttpURLConnectionHelper {
                     String subvalue = "";
                     int i = 0;
                     for (String paramArray : paramsArray) {
-                        if (i == paramsArray.size() - 1)
-                        {
+                        if (i == paramsArray.size() - 1) {
                             subvalue = subvalue + paramArray;
-                        }
-                        else {
+                        } else {
                             subvalue = subvalue + paramArray + "+";
                         }
                         i++;
@@ -102,7 +103,7 @@ public class HttpURLConnectionHelper {
         return allGetParams;
     }
 
-    public static Reader postHttpConnection(String host, JSONObject params, boolean getParams, String auth_token) throws IOException, JSONException {
+    public static Reader postHttpConnection(String host, JSONObject params, boolean getParams, String auth_token, boolean debug) throws IOException, JSONException {
         HttpURLConnection conn = null;
 
         if (getParams) {
@@ -111,6 +112,11 @@ public class HttpURLConnectionHelper {
                 host = host + "?auth=" + auth_token;
             }
         }
+
+        if (debug) {
+            Log.d("HUMM_API", "POST petition to " + host);
+        }
+
         URL url = new URL(host);
 
         conn = (HttpURLConnection) url.openConnection();
@@ -146,11 +152,15 @@ public class HttpURLConnectionHelper {
         return reader;
     }
 
-    public static Reader putHttpConnection(String host, JSONObject params, boolean getParams, String auth_token) throws IOException, JSONException {
+    public static Reader putHttpConnection(String host, JSONObject params, boolean getParams, String auth_token, boolean debug) throws IOException, JSONException {
         HttpURLConnection conn = null;
 
         if (getParams) {
             host = host + getParams(params);
+        }
+
+        if (debug) {
+            Log.d("HUMM_API", "PUT petition to " + host);
         }
 
         URL url = new URL(host);
@@ -186,11 +196,15 @@ public class HttpURLConnectionHelper {
         return reader;
     }
 
-    public static Reader patchHttpConnection(String host, JSONObject params, boolean getParams, String auth_token) throws IOException, JSONException {
+    public static Reader patchHttpConnection(String host, JSONObject params, boolean getParams, String auth_token, boolean debug) throws IOException, JSONException {
         HttpURLConnection conn = null;
 
         if (getParams) {
             host = host + getParams(params);
+        }
+
+        if (debug) {
+            Log.d("HUMM_API", "PATCH petition to " + host);
         }
 
         URL url = new URL(host);
@@ -230,11 +244,14 @@ public class HttpURLConnectionHelper {
     }
 
 
-    public static Reader deleteHttpConnection(String host, JSONObject params, String auth_token) throws IOException, JSONException {
+    public static Reader deleteHttpConnection(String host, JSONObject params, String auth_token, boolean debug) throws IOException, JSONException {
         HttpURLConnection conn = null;
 
         host = host + getParams(params);
 
+        if (debug) {
+            Log.d("HUMM_API", "DELETE petition to " + host);
+        }
         URL url = new URL(host);
         conn = (HttpURLConnection) url.openConnection();
 
