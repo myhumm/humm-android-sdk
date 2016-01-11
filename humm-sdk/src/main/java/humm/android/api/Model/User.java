@@ -24,6 +24,9 @@ public class User extends Humm {
     private HashMap<String, List<String>> preferences;
     private List<User> similar;
 
+    public User() {
+    }
+
     public HashMap getAccount() {
         return account;
     }

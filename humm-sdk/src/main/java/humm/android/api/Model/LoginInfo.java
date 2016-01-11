@@ -14,6 +14,9 @@ public class LoginInfo extends Humm implements Parcelable {
     private String refresh_token;
     private String scope;
 
+    public LoginInfo() {
+    }
+
     public String getAccess_token() {
         return access_token;
     }

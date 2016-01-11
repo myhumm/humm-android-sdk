@@ -9,6 +9,9 @@ public class PlaylistOwnerHashMap extends Playlist {
 
     private HashMap<String, String> owner;
 
+    public PlaylistOwnerHashMap() {
+    }
+
     public HashMap<String, String> getOwner() {
         return owner;
     }

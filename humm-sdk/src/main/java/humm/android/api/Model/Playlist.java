@@ -15,6 +15,9 @@ public abstract class Playlist extends Humm {
     private HashMap stats;
     private List contributors;
 
+    public Playlist() {
+    }
+
     public String getTitle() {
         return title;
     }

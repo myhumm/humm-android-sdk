@@ -4,10 +4,11 @@ package humm.android.api.Model;
  * Created by josealonsogarcia on 16/9/15.
  */
 
-/*
-    Clase marcadora
- */
 public class Humm {
+
+    public Humm() {
+    }
+
     private String _id;
 
     public String get_id() {

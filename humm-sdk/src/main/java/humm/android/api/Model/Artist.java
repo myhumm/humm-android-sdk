@@ -18,6 +18,9 @@ public class Artist extends Humm {
 //    private List<String> following;
     private HashMap<String, String> stats;
 
+    public Artist() {
+    }
+
     public List<String> getMoods() {
         return moods;
     }

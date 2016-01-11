@@ -10,6 +10,9 @@ public class PlaylistOwnerList extends Playlist {
 
     private List<HashMap<String, String>> owner;
 
+    public PlaylistOwnerList(List<HashMap<String, String>> owner) {
+        this.owner = owner;
+    }
 
     public List<HashMap<String, String>> getOwner() {
         return owner;

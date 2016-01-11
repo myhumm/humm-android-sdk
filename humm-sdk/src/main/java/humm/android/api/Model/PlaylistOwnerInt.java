@@ -9,6 +9,10 @@ public class PlaylistOwnerInt extends Playlist {
 
     private int owner;
 
+    public PlaylistOwnerInt(int owner) {
+        this.owner = owner;
+    }
+
     public int getOwner() {
         return owner;
     }

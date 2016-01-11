@@ -28,6 +28,9 @@ public class Song extends Humm implements Parcelable {
     private List stories;
     private List genres;
 
+    public Song() {
+    }
+
     public static String ENDPOINT_COVER = "http://wave.livingindietv.com/images/playlist?id=%s&size=thumb";
 
     public String getTitle() {
