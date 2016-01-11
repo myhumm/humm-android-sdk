@@ -10,13 +10,13 @@ import java.util.List;
  */
 public class Artist extends Humm {
 
-    private List<String> moods;
-    private List<HashMap> similar;
-    private HashMap account;
-    private HashMap<String, String> urls;
-//    private List<String> images;
+    protected List<String> moods;
+    protected List<HashMap> similar;
+    protected HashMap account;
+    protected HashMap<String, String> urls;
+    //    private List<String> images;
 //    private List<String> following;
-    private HashMap<String, String> stats;
+    protected HashMap<String, String> stats;
 
     public Artist() {
     }

@@ -15,18 +15,18 @@ import humm.android.api.HummAPI;
  */
 public class Song extends Humm implements Parcelable {
 
-    private String title;
-    private String description;
-    private String type;
-    private String date;
-    private HashMap urls;
-    private List<HashMap<String, String>> artists;
-    private List<HashMap> playlists;
-    private HashMap<String, String> foreign_ids;
-    private HashMap<String, String> stats;
-    private List contributors;
-    private List stories;
-    private List genres;
+    protected String title;
+    protected String description;
+    protected String type;
+    protected String date;
+    protected HashMap urls;
+    protected List<HashMap<String, String>> artists;
+    protected List<HashMap> playlists;
+    protected HashMap<String, String> foreign_ids;
+    protected HashMap<String, String> stats;
+    protected List contributors;
+    protected List stories;
+    protected List genres;
 
     public Song() {
     }

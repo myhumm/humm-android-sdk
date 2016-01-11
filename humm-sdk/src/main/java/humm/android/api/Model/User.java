@@ -12,17 +12,17 @@ import java.util.List;
  */
 public class User extends Humm {
 
-    private HashMap account;
-    private String signup;
-    private String last_visit;
-    private boolean featured;
-    private List<Song> played;
-    private List<String> genres;
-    private List<HashMap<String, String>> favourites;
-    private List<HashMap<String, String>> following;
-    private List<HashMap<String, String>> subscriptions;
-    private HashMap<String, List<String>> preferences;
-    private List<User> similar;
+    protected HashMap account;
+    protected String signup;
+    protected String last_visit;
+    protected boolean featured;
+    protected List<Song> played;
+    protected List<String> genres;
+    protected List<HashMap<String, String>> favourites;
+    protected List<HashMap<String, String>> following;
+    protected List<HashMap<String, String>> subscriptions;
+    protected HashMap<String, List<String>> preferences;
+    protected List<User> similar;
 
     public User() {
     }

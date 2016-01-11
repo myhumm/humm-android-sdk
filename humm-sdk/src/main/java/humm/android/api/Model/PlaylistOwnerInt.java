@@ -7,7 +7,7 @@ import java.util.HashMap;
  */
 public class PlaylistOwnerInt extends Playlist {
 
-    private int owner;
+    protected int owner;
 
     public PlaylistOwnerInt(int owner) {
         this.owner = owner;

@@ -9,7 +9,7 @@ public class Humm {
     public Humm() {
     }
 
-    private String _id;
+    protected String _id;
 
     public String get_id() {
         return _id;

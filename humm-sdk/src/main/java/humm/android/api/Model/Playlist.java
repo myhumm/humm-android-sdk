@@ -10,10 +10,10 @@ public abstract class Playlist extends Humm {
 
     public static String ENDPOINT_COVER = "http://wave.livingindietv.com/images/playlist?id=%s&size=thumb";
 
-    private String title;
-    private String description;
-    private HashMap stats;
-    private List contributors;
+    protected String title;
+    protected String description;
+    protected HashMap stats;
+    protected List contributors;
 
     public Playlist() {
     }

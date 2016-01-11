@@ -8,11 +8,11 @@ import android.os.Parcelable;
  */
 public class LoginInfo extends Humm implements Parcelable {
 
-    private String access_token;
-    private int expires_in;
-    private String token_type;
-    private String refresh_token;
-    private String scope;
+    protected String access_token;
+    protected int expires_in;
+    protected String token_type;
+    protected String refresh_token;
+    protected String scope;
 
     public LoginInfo() {
     }

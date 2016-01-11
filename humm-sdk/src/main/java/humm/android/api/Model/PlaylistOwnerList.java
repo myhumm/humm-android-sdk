@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class PlaylistOwnerList extends Playlist {
 
-    private List<HashMap<String, String>> owner;
+    protected List<HashMap<String, String>> owner;
 
     public PlaylistOwnerList(List<HashMap<String, String>> owner) {
         this.owner = owner;
