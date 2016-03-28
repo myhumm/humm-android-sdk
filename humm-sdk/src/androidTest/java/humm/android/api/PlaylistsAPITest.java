@@ -332,6 +332,33 @@ public class PlaylistsAPITest extends HummTest {
 
     }
 
+    public void testStaffPIcks() throws Throwable {
+
+        final HummAPI humm = HummAPI.getInstance();
+        doLogin();
+
+        final int limit = 3;
+        int offset = 0;
+
+        final CountDownLatch signal = new CountDownLatch(1);
+
+        humm.getPlaylists().getStaffPicks(limit, offset, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                List<PlaylistOwnerList> playlistList = (List) result;
+                assertEquals(limit, playlistList.size());
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
+    }
+
     public void testRecent() throws Throwable {
 
         final HummAPI humm = HummAPI.getInstance();

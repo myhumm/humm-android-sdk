@@ -8,6 +8,11 @@ import java.util.List;
  */
 public class PlaylistOwnerList extends Playlist {
 
+    public PlaylistOwnerList(String id, String title, String description, HashMap stats, List contributors, List<HashMap<String, String>> owner) {
+        super(id, title, description, stats, contributors);
+        this.owner = owner;
+    }
+
     protected List<HashMap<String, String>> owner;
 
     public PlaylistOwnerList(List<HashMap<String, String>> owner) {

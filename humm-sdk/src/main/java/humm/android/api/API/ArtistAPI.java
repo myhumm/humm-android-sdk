@@ -4,6 +4,14 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
@@ -12,7 +20,10 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.List;
 
+import humm.android.api.Deserializers.SongDeserializer;
 import humm.android.api.HttpURLConnectionHelper;
 import humm.android.api.HummAPI;
 import humm.android.api.HummException;
@@ -31,6 +42,12 @@ import humm.android.api.OnActionFinishedListener;
  */
 
 public class ArtistAPI extends HummAPI {
+
+    public static String SONG_TYPE_COVER = "cover";
+    public static String SONG_TYPE_TRACK = "track";
+    public static String SONG_TYPE_VERSION = "version";
+    public static String SONG_TYPE_VIDEO = "video";
+    public static String SONG_TYPE_LIVE = "live";
 
     private static ArtistAPI instance = null;
 
@@ -66,8 +83,7 @@ public class ArtistAPI extends HummAPI {
             @Override
             public void onComplete(Object object) {
                 HummSingleResult<Artist> result = (HummSingleResult<Artist>) object;
-                if (result == null)
-                {
+                if (result == null) {
                     listener.actionFinished(null);
                     return;
                 }
@@ -83,6 +99,36 @@ public class ArtistAPI extends HummAPI {
                 listener.onError(new HummException(e.getMessage()));
             }
         }).start();
+
+    }
+
+    public void get(final String idArtist, final int limit, final int offset, final OnActionFinishedListener listener, HummTask.TaskMode mode) {
+
+        new HummTask<HummMultipleResult<Artist>>(new HummTask.Job() {
+            @Override
+            public Object onStart() throws Exception {
+                return get(idArtist, limit, offset);
+            }
+
+            @Override
+            public void onComplete(Object object) {
+                HummSingleResult<Artist> result = (HummSingleResult<Artist>) object;
+                if (result == null) {
+                    listener.actionFinished(null);
+                    return;
+                }
+                if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
+                    listener.actionFinished(result.getData_response());
+                } else {
+                    listener.onError(new HummException(result.getError_response()));
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                listener.onError(new HummException(e.getMessage()));
+            }
+        }).start(mode);
 
     }
 
@@ -166,8 +212,7 @@ public class ArtistAPI extends HummAPI {
             @Override
             public void onComplete(Object object) {
                 HummSingleResult<Artist> result = (HummSingleResult<Artist>) object;
-                if (result == null)
-                {
+                if (result == null) {
                     listener.actionFinished(null);
                     return;
                 }
@@ -295,8 +340,7 @@ public class ArtistAPI extends HummAPI {
             @Override
             public void onComplete(Object object) {
                 HummSingleResult<Artist> result = (HummSingleResult<Artist>) object;
-                if (result == null)
-                {
+                if (result == null) {
                     listener.actionFinished(null);
                     return;
                 }
@@ -394,8 +438,7 @@ public class ArtistAPI extends HummAPI {
             @Override
             public void onComplete(Object object) {
                 HummMultipleResult<PlaylistOwnerList> result = (HummMultipleResult<PlaylistOwnerList>) object;
-                if (result == null)
-                {
+                if (result == null) {
                     listener.actionFinished(null);
                     return;
                 }
@@ -446,7 +489,11 @@ public class ArtistAPI extends HummAPI {
             }
 
             Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists/" + idArtist + "/radio", parameters, token, DEBUG);
-            result = new Gson().fromJson(reader, listType);
+//            result = new Gson().fromJson(reader, listType);
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Song.class, new SongDeserializer()).create();
+
+            result = gson.fromJson(reader, listType);
 
         } catch (IOException ex) {
             // HttpUrlConnection will throw an IOException if any 4XX
@@ -494,8 +541,7 @@ public class ArtistAPI extends HummAPI {
             public void onComplete(Object object) {
                 HummMultipleResult<Song> result = (HummMultipleResult<Song>) object;
 
-                if (result == null)
-                {
+                if (result == null) {
                     listener.actionFinished(null);
                     return;
                 }
@@ -593,8 +639,7 @@ public class ArtistAPI extends HummAPI {
             public void onComplete(Object object) {
                 HummMultipleResult<Artist> result = (HummMultipleResult<Artist>) object;
 
-                if (result == null)
-                {
+                if (result == null) {
                     listener.actionFinished(null);
                     return;
                 }
@@ -610,6 +655,36 @@ public class ArtistAPI extends HummAPI {
                 listener.onError(new HummException(e.getMessage()));
             }
         }).start();
+    }
+
+    public void getSimilar(final String idArtist, final int limit, final int offset, final OnActionFinishedListener listener, HummTask.TaskMode mode) {
+
+        new HummTask<HummMultipleResult<Artist>>(new HummTask.Job() {
+            @Override
+            public Object onStart() throws Exception {
+                return getSimilar(idArtist, limit, offset);
+            }
+
+            @Override
+            public void onComplete(Object object) {
+                HummMultipleResult<Artist> result = (HummMultipleResult<Artist>) object;
+
+                if (result == null) {
+                    listener.actionFinished(null);
+                    return;
+                }
+                if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
+                    listener.actionFinished(result.getData_response());
+                } else {
+                    listener.onError(new HummException(result.getError_response()));
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                listener.onError(new HummException(e.getMessage()));
+            }
+        }).start(mode);
     }
 
     /**
@@ -634,8 +709,7 @@ public class ArtistAPI extends HummAPI {
             public void onComplete(Object object) {
                 HummMultipleResult<Artist> result = (HummMultipleResult<Artist>) object;
 
-                if (result == null)
-                {
+                if (result == null) {
                     listener.actionFinished(null);
                     return;
                 }
@@ -743,8 +817,7 @@ public class ArtistAPI extends HummAPI {
             public void onComplete(Object object) {
                 HummMultipleResult<Song> result = (HummMultipleResult<Song>) object;
 
-                if (result == null)
-                {
+                if (result == null) {
                     listener.actionFinished(null);
                     return;
                 }
@@ -800,7 +873,12 @@ public class ArtistAPI extends HummAPI {
                 parameters.put("songtype", songType);
             }
             Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists/" + idArtist + "/topsongs", parameters, token, DEBUG);
-            result = new Gson().fromJson(reader, listType);
+//            result = new Gson().fromJson(reader, listType);
+
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Song.class, new SongDeserializer()).create();
+
+            result = gson.fromJson(reader, listType);
 
         } catch (IOException ex) {
             // HttpUrlConnection will throw an IOException if any 4XX
@@ -904,8 +982,7 @@ public class ArtistAPI extends HummAPI {
             public void onComplete(Object object) {
                 HummMultipleResult<Artist> result = (HummMultipleResult<Artist>) object;
 
-                if (result == null)
-                {
+                if (result == null) {
                     listener.actionFinished(null);
                     return;
                 }
@@ -996,8 +1073,7 @@ public class ArtistAPI extends HummAPI {
             public void onComplete(Object object) {
                 HummMultipleResult<Artist> result = (HummMultipleResult<Artist>) object;
 
-                if (result == null)
-                {
+                if (result == null) {
                     listener.actionFinished(null);
                     return;
                 }
@@ -1088,8 +1164,7 @@ public class ArtistAPI extends HummAPI {
             public void onComplete(Object object) {
                 HummMultipleResult<Artist> result = (HummMultipleResult<Artist>) object;
 
-                if (result == null)
-                {
+                if (result == null) {
                     listener.actionFinished(null);
                     return;
                 }

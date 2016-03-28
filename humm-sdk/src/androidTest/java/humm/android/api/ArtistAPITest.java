@@ -118,7 +118,7 @@ public class ArtistAPITest extends HummTest {
         final HummAPI humm = HummAPI.getInstance();
         doLogin();
 
-        final String idArtist = "55116991f9c816a0d639ea75";
+        final String idArtist = "55116930f9c816a0d639e915";
         final int limit = 10;
         final int offset = 0;
         final String songType = null;

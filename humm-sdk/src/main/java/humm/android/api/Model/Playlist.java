@@ -18,6 +18,14 @@ public abstract class Playlist extends Humm {
     public Playlist() {
     }
 
+    public Playlist(String id, String title, String description, HashMap stats, List contributors) {
+        this._id = id;
+        this.title = title;
+        this.description = description;
+        this.stats = stats;
+        this.contributors = contributors;
+    }
+
     public String getTitle() {
         return title;
     }

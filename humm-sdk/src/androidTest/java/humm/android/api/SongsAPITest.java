@@ -1,24 +1,9 @@
 package humm.android.api;
 
-import android.test.InstrumentationTestCase;
-import android.util.Log;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import humm.android.api.Model.HummMultipleResult;
-import humm.android.api.Model.HummSingleResult;
-import humm.android.api.Model.Playlist;
 import humm.android.api.Model.PlaylistOwnerHashMap;
 import humm.android.api.Model.Song;
 
@@ -43,7 +28,7 @@ public class SongsAPITest extends HummTest {
                 if (song != null) {
                     assertEquals("track", song.getType());
                     assertEquals("0", song.getPopularity());
-                    assertEquals("16", song.getPlaylists());
+                    assertEquals("16", song.getStatsPlaylists());
                     assertEquals("Airbag", song.getTitle());
                 } else {
                     assertNull(song); //no content

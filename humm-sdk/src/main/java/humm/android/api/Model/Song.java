@@ -28,10 +28,27 @@ public class Song extends Humm implements Parcelable {
     protected List stories;
     protected List genres;
 
+    public Song(String _id, String title, String description, String type, String date, HashMap urls, List<HashMap<String, String>> artists, List<HashMap> playlists, HashMap<String, String> foreign_ids, HashMap<String, String> stats, List contributors, List stories, List genres) {
+        this._id = _id;
+        this.title = title;
+        this.description = description;
+        this.type = type;
+        this.date = date;
+        this.urls = urls;
+        this.artists = artists;
+        this.playlists = playlists;
+        this.foreign_ids = foreign_ids;
+        this.stats = stats;
+        this.contributors = contributors;
+        this.stories = stories;
+        this.genres = genres;
+    }
+
     public Song() {
     }
 
     public static String ENDPOINT_COVER = "http://wave.livingindietv.com/images/playlist?id=%s&size=thumb";
+
 
     public String getTitle() {
         return title;
@@ -140,6 +157,10 @@ public class Song extends Humm implements Parcelable {
 
     }
 
+    public List<HashMap> getPlaylists() {
+        return playlists;
+    }
+
     public String getYoutubeURL() {
         if (this.urls != null && this.urls.get("youtube") != null) {
             return (String) this.urls.get("youtube");
@@ -161,7 +182,7 @@ public class Song extends Humm implements Parcelable {
         return null;
     }
 
-    public String getPlaylists() {
+    public String getStatsPlaylists() {
         if (this.stats != null && this.stats.get("playlists") != null) {
             return this.stats.get("playlists");
         }
@@ -169,7 +190,7 @@ public class Song extends Humm implements Parcelable {
     }
 
     public String getPlaylistCover() {
-        if (this.playlists != null && this.playlists.size() > 0 &&  playlists.get(0) != null) {
+        if (this.playlists != null && this.playlists.size() > 0 && playlists.get(0) != null) {
             String idPlaylist = (String) playlists.get(0).get("pid");
 
 //            return "http://wave.livingindietv.com/images/playlist?id=" + idPlaylist + "&size=thumb";

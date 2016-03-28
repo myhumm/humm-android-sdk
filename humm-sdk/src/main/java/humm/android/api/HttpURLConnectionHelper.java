@@ -109,7 +109,7 @@ public class HttpURLConnectionHelper {
         if (getParams) {
             host = host + getParams(params);
             if (auth_token != null) {
-                host = host + "?auth=" + auth_token;
+                host = host + (params != null && params.length() > 1 ? "&auth=" : "?auth=") + auth_token;
             }
         }
 
@@ -128,7 +128,7 @@ public class HttpURLConnectionHelper {
         conn.setDoOutput(true);
 //        conn.setChunkedStreamingMode(0); // Use default chunk size
 
-        Log.d("HTTPURLConnection", host);
+//        Log.d("HTTPURLConnection", host);
 
 //        conn.setRequestProperty("Accept", "application/json");
 //        conn.setRequestProperty("Content-Type", "x-www-form-urlencoded");
@@ -201,6 +201,10 @@ public class HttpURLConnectionHelper {
 
         if (getParams) {
             host = host + getParams(params);
+            if (auth_token != null) {
+                host = host + (params != null && params.length() > 1 ? "&auth=" : "?auth=") + auth_token;
+            }
+
         }
 
         if (debug) {
@@ -213,7 +217,8 @@ public class HttpURLConnectionHelper {
 
         conn.setReadTimeout(5000);
 //        conn.setConnectTimeout(10000);
-        conn.setRequestMethod("PATCH");
+        conn.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+        conn.setRequestMethod("POST");
         conn.setDoInput(true);
         conn.setDoOutput(true);
 
@@ -257,7 +262,9 @@ public class HttpURLConnectionHelper {
 
         conn.setReadTimeout(5000);
 //        conn.setConnectTimeout(10000);
-        conn.setRequestMethod("DELETE");
+        conn.setRequestProperty("X-HTTP-Method-Override", "DELETE");
+//        conn.setRequestMethod("DELETE");
+        conn.setRequestMethod("POST");
 //        conn.setDoInput(true);
         conn.setDoOutput(true);
 

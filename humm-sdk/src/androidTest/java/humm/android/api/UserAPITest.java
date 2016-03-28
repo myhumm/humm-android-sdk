@@ -1,5 +1,9 @@
 package humm.android.api;
 
+import android.util.Log;
+
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,6 +17,7 @@ import humm.android.api.Model.HummSingleResult;
 import humm.android.api.Model.Playlist;
 import humm.android.api.Model.PlaylistOwnerInt;
 import humm.android.api.Model.PlaylistOwnerList;
+import humm.android.api.Model.Settings;
 import humm.android.api.Model.Song;
 import humm.android.api.Model.User;
 
@@ -407,21 +412,13 @@ public class UserAPITest extends HummTest {
         final int limit = 2;
         int offset = 0;
 
-//        HummMultipleResult<PlaylistOwnerInt> result = humm.getUser().getPlaylists(idUser, limit, offset);
-//
-//        if (result != null) {
-//            assertEquals("ok", result.getStatus_response());
-//        } else {
-//            assertNull(result); //no content
-//        }
-
         final CountDownLatch signal = new CountDownLatch(1);
         humm.getUser().getPlaylists(idUser, limit, offset, new OnActionFinishedListener() {
             @Override
             public void actionFinished(Object result) {
                 List<PlaylistOwnerInt> playlistList = (List) result;
 
-                if (result != null ) { //no content
+                if (result != null) { //no content
                     assertEquals(limit, playlistList.size());
                 }
                 signal.countDown();
@@ -436,21 +433,119 @@ public class UserAPITest extends HummTest {
 
     }
 
-//    public void testPlays() throws Throwable {
-//
-//        final HummAPI humm = HummAPI.getInstance();
-//        doLogin();
-//        String idUser = "5649c572ae8c502824a46a99"; //user1
-//        int limit = 0;
-//        int offset = 0;
-//
-//        HummMultipleResult<Song> result = humm.getUser().getPlays(idUser, limit, offset);
-//
-//        if (result != null) {
-//            assertEquals("ok", result.getStatus_response());
-//        } else {
-//            assertNull(result); //no content
-//        }
-//    }
+    public void testCheckEmail() throws Throwable {
+
+        HummAPI.setDEBUG(true);
+        final HummAPI humm = HummAPI.getInstance();
+        doLogin();
+
+        String email = "asda@mail.com";
+
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getUser().checkEmail(email, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                boolean userExists = (boolean) result;
+
+                assertFalse(userExists);
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
+    }
+
+    public void testCheckUsername() throws Throwable {
+
+        HummAPI.setDEBUG(true);
+        final HummAPI humm = HummAPI.getInstance();
+        doLogin();
+
+        String username = "asdacvveee";
+
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getUser().checkUsername(username, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                boolean userExists = (boolean) result;
+
+                assertFalse(userExists);
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
+    }
+
+    public void testAddService() throws Throwable {
+
+        HummAPI.setDEBUG(true);
+        final HummAPI humm = HummAPI.getInstance();
+        doLogin();
+
+        String userId = "5661783496a4f4e521fe3f65";
+        String service = "facebook";
+        String sid = "sidexample";
+        String token = "verybigtoken";
+        String uname = "username service";
+        String secret = "bigsecret";
+
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getUser().addService(userId, service, sid, token, uname, secret, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                Settings userSettings = (Settings) result;
+
+                assertFalse(false);
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
+    }
+
+
+    public void testRemoveService() throws Throwable {
+
+        HummAPI.setDEBUG(true);
+        final HummAPI humm = HummAPI.getInstance();
+        doLogin();
+
+        String service = "facebook";
+        String sid = "sidexample";
+
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getUser().removeService( service, sid, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                User userSettings = (User) result;
+
+                assertFalse(false);
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
+    }
 
 }

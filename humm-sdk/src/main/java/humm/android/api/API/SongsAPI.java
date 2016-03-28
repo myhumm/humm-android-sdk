@@ -3,6 +3,7 @@ package humm.android.api.API;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
 
+import humm.android.api.Deserializers.SongDeserializer;
 import humm.android.api.HttpURLConnectionHelper;
 import humm.android.api.HummAPI;
 import humm.android.api.HummException;
@@ -101,7 +103,12 @@ public class SongsAPI extends HummAPI {
             }
 
             Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/songs/" + idSong, null, token, DEBUG);
-            result = new Gson().fromJson(reader, listType);
+//            result = new Gson().fromJson(reader, listType);
+
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Song.class, new SongDeserializer()).create();
+
+            result = gson.fromJson(reader, listType);
 
         } catch (IOException ex) {
             // HttpUrlConnection will throw an IOException if any 4XX
@@ -196,7 +203,12 @@ public class SongsAPI extends HummAPI {
             }
 
             Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/songs/featured", parameters, token, DEBUG);
-            result = new Gson().fromJson(reader, listType);
+//            result = new Gson().fromJson(reader, listType);
+
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Song.class, new SongDeserializer()).create();
+
+            result = gson.fromJson(reader, listType);
 
         } catch (IOException ex) {
             // HttpUrlConnection will throw an IOException if any 4XX
@@ -289,7 +301,12 @@ public class SongsAPI extends HummAPI {
             }
 
             Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/songs/popular", parameters, token, DEBUG);
-            result = new Gson().fromJson(reader, listType);
+//            result = new Gson().fromJson(reader, listType);
+
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Song.class, new SongDeserializer()).create();
+
+            result = gson.fromJson(reader, listType);
 
         } catch (IOException ex) {
             // HttpUrlConnection will throw an IOException if any 4XX
@@ -382,7 +399,12 @@ public class SongsAPI extends HummAPI {
             }
 
             Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/songs/recent", parameters, token, DEBUG);
-            result = new Gson().fromJson(reader, listType);
+//            result = new Gson().fromJson(reader, listType);
+
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Song.class, new SongDeserializer()).create();
+
+            result = gson.fromJson(reader, listType);
 
         } catch (IOException ex) {
             // HttpUrlConnection will throw an IOException if any 4XX
@@ -487,7 +509,12 @@ public class SongsAPI extends HummAPI {
             }
 
             Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/songs", parameters, token, DEBUG);
-            result = new Gson().fromJson(reader, listType);
+//            result = new Gson().fromJson(reader, listType);
+
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Song.class, new SongDeserializer()).create();
+
+            result = gson.fromJson(reader, listType);
 
         } catch (IOException ex) {
             // HttpUrlConnection will throw an IOException if any 4XX
@@ -673,7 +700,12 @@ public class SongsAPI extends HummAPI {
             }
 
             Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/songs/" + idSong + "/similar", parameters, token, DEBUG);
-            result = new Gson().fromJson(reader, listType);
+//            result = new Gson().fromJson(reader, listType);
+
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Song.class, new SongDeserializer()).create();
+
+            result = gson.fromJson(reader, listType);
 
         } catch (IOException ex) {
             // HttpUrlConnection will throw an IOException if any 4XX

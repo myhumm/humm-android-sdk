@@ -29,10 +29,11 @@ public class HummAPITest extends HummTest {
         final String email = "deleteme111@delete.com";
         final String firstname = "delete";
         final String lastname = "me";
+        final String referal = null;
 
         final CountDownLatch signal = new CountDownLatch(1);
 
-        humm.signup(username, password, email, firstname, lastname, new OnActionFinishedListener() {
+        humm.signup(username, password, email, firstname, lastname,referal, new OnActionFinishedListener() {
             @Override
             public void actionFinished(Object result) {
                 LoginInfo login = (LoginInfo) result;
@@ -47,38 +48,6 @@ public class HummAPITest extends HummTest {
         });
 
         signal.await(30, TimeUnit.SECONDS);
-    }
-
-    public void testRadio() throws Throwable {
-        final HummAPI humm = HummAPI.getInstance();
-        doLogin();
-
-        final int limit = 10;
-        List<String> genres = new ArrayList<>();
-        genres.add("pop");
-        genres.add("rock");
-        List<String> moods = null;
-        boolean discovery = false;
-        boolean own = false;
-
-        final CountDownLatch signal = new CountDownLatch(1);
-
-        humm.radio(limit, genres, moods, discovery, own, new OnActionFinishedListener() {
-            @Override
-            public void actionFinished(Object result) {
-                List<Song> songList = (List) result;
-                assertEquals(limit, songList.size());
-                signal.countDown();
-            }
-
-            @Override
-            public void onError(Exception e) {
-                assertTrue(false);
-            }
-        });
-
-        signal.await(30, TimeUnit.SECONDS);
-
     }
 
 }
