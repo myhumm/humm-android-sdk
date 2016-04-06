@@ -119,13 +119,13 @@ public class ArtistAPITest extends HummTest {
         doLogin();
 
         final String idArtist = "55116930f9c816a0d639e915";
-        final int limit = 10;
+        final int limit = 4;
         final int offset = 0;
         final String songType = null;
 
         final CountDownLatch signal = new CountDownLatch(1);
 
-        humm.getArtist().getTopSongs(idArtist, limit, offset, songType, new OnActionFinishedListener() {
+        humm.getArtist().getTopSongs(idArtist, limit, offset, songType, true, new OnActionFinishedListener() {
             @Override
             public void actionFinished(Object result) {
                 List<Song> topSongs = (List) result;

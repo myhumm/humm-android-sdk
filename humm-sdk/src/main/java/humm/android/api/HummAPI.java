@@ -212,7 +212,7 @@ public class HummAPI {
 
     }
 
-    private static void updateLoginData(LoginInfo loginInfo) {
+    public static void updateLoginData(LoginInfo loginInfo) {
 
         if (loginInfo != null) {
             token = loginInfo.getAccess_token();

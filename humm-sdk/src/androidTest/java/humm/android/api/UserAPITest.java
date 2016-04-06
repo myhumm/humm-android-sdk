@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import humm.android.api.Model.Artist;
 import humm.android.api.Model.HummMultipleResult;
 import humm.android.api.Model.HummSingleResult;
+import humm.android.api.Model.LoginInfo;
 import humm.android.api.Model.Playlist;
 import humm.android.api.Model.PlaylistOwnerInt;
 import humm.android.api.Model.PlaylistOwnerList;
@@ -493,7 +494,6 @@ public class UserAPITest extends HummTest {
         final HummAPI humm = HummAPI.getInstance();
         doLogin();
 
-        String userId = "5661783496a4f4e521fe3f65";
         String service = "facebook";
         String sid = "sidexample";
         String token = "verybigtoken";
@@ -501,7 +501,7 @@ public class UserAPITest extends HummTest {
         String secret = "bigsecret";
 
         final CountDownLatch signal = new CountDownLatch(1);
-        humm.getUser().addService(userId, service, sid, token, uname, secret, new OnActionFinishedListener() {
+        humm.getUser().addService(service, sid, token, uname, secret, new OnActionFinishedListener() {
             @Override
             public void actionFinished(Object result) {
                 Settings userSettings = (Settings) result;
@@ -530,7 +530,7 @@ public class UserAPITest extends HummTest {
         String sid = "sidexample";
 
         final CountDownLatch signal = new CountDownLatch(1);
-        humm.getUser().removeService( service, sid, new OnActionFinishedListener() {
+        humm.getUser().removeService(service, sid, new OnActionFinishedListener() {
             @Override
             public void actionFinished(Object result) {
                 User userSettings = (User) result;
@@ -547,5 +547,61 @@ public class UserAPITest extends HummTest {
         signal.await(30, TimeUnit.SECONDS);
 
     }
+
+
+    public void testResetEmail() throws Throwable {
+
+        HummAPI.setDEBUG(true);
+        final HummAPI humm = HummAPI.getInstance();
+        doLogin();
+
+        String email = "p@p.es";
+
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getUser().resetPassword(email, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                boolean emailReseted = (boolean) result;
+
+                assertTrue(emailReseted);
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
+    }
+
+    public void testLoginWithService() throws Throwable {
+
+        HummAPI.setDEBUG(true);
+        final HummAPI humm = HummAPI.getInstance();
+        doLogin();
+
+        String userId = "180331315688964";
+
+        final CountDownLatch signal = new CountDownLatch(1);
+        humm.getUser().doLoginWithService(userId, new OnActionFinishedListener() {
+            @Override
+            public void actionFinished(Object result) {
+                LoginInfo loginInfo = (LoginInfo) result;
+
+                assertTrue(true);
+                signal.countDown();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                assertTrue(false);
+            }
+        });
+        signal.await(30, TimeUnit.SECONDS);
+
+    }
+
 
 }

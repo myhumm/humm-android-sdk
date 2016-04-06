@@ -58,6 +58,7 @@ public class UserAPI extends HummAPI {
     }
 
     private static String RESPONSE_USER_EXITS = "User exists";
+    private static String RESPONSE_PASSWORD_CHANGED = "Password changed";
 
     public void doSignup(final String username, final String password, final String email, final String firstname, final String lastname, final String referal, final OnActionFinishedListener listener) {
         new HummTask<HummSingleResult<LoginInfo>>(new HummTask.Job() {
@@ -97,8 +98,7 @@ public class UserAPI extends HummAPI {
             parameters.put("email", email);
             parameters.put("first_name", Uri.encode(firstname));
             parameters.put("last_name", Uri.encode(lastname));
-            if (referal != null)
-            {
+            if (referal != null) {
                 parameters.put("referal", referal);
 
             }
@@ -177,6 +177,84 @@ public class UserAPI extends HummAPI {
             Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/token", parameters, true, null, DEBUG);
             result = new Gson().fromJson(reader, listType);
 
+        } catch (IOException ex) {
+            // HttpUrlConnection will throw an IOException if any 4XX
+            // response is sent. If we request the status again, this
+            // time the internal status will be properly set, and we'll be
+            // able to retrieve it.
+            Log.e("Debug", "error " + ex.getMessage(), ex);
+            //android bug with 401
+
+            result.setStatus_response(HttpURLConnectionHelper.KO);
+            result.setError_response("Unauthorized");
+
+        } catch (JSONException e) {
+            Log.e("Debug", "error " + e.getMessage(), e);
+
+            result.setStatus_response(HttpURLConnectionHelper.KO);
+            result.setError_response("error in params");
+        } catch (Exception e) {
+            Log.e("ERROR", "error " + e.getMessage(), e);
+
+            result.setStatus_response(HttpURLConnectionHelper.KO);
+            result.setError_response("sync error");
+
+        }
+
+
+        return result;
+    }
+
+    public void doLoginWithService(final String userId, final OnActionFinishedListener listener) {
+        new HummTask<HummSingleResult<LoginInfo>>(new HummTask.Job() {
+            @Override
+            public Object onStart() throws Exception {
+                return doLoginWithService(userId);
+            }
+
+            @Override
+            public void onComplete(Object object) {
+
+                HummSingleResult<LoginInfo> loginInfo = (HummSingleResult<LoginInfo>) object;
+                if (loginInfo == null || loginInfo.getData_response() == null || loginInfo.getData_response().getAccess_token() == null) {
+                    listener.actionFinished(null);
+                    return;
+                }
+
+                listener.actionFinished(loginInfo.getData_response());
+            }
+
+            @Override
+            public void onError(Exception e) {
+                listener.onError(new HummException(e.getLocalizedMessage()));
+            }
+        }).start();
+    }
+
+    public HummSingleResult<LoginInfo> doLoginWithService(String userId) {
+
+        HummSingleResult<LoginInfo> result = new HummSingleResult<LoginInfo>();
+        try {
+
+            Type listType = new TypeToken<HummSingleResult<LoginInfo>>() {
+            }.getType();
+
+
+            HummAPI.getInstance().updateUserToken();
+
+            JSONObject parameters = new JSONObject();
+            parameters.put("grant_type", grantType);
+            parameters.put("client_id", clientId);
+            parameters.put("userId", userId);
+//            parameters.put("password", password);
+
+            Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/loginWithService", parameters, true, null, DEBUG);
+            result = new Gson().fromJson(reader, listType);
+
+            if (result != null && result.getData_response() != null) {
+
+                updateLoginData(result.getData_response());
+            }
         } catch (IOException ex) {
             // HttpUrlConnection will throw an IOException if any 4XX
             // response is sent. If we request the status again, this
@@ -1465,11 +1543,11 @@ public class UserAPI extends HummAPI {
      *                 a list of <code>PlaylistOwnerInt</code>.
      *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
      */
-    public void addService(final String userId, final String serviceName, final String serviceId, final String token, final String serviceUsername, final String secret, final OnActionFinishedListener listener) {
+    public void addService(final String serviceName, final String serviceId, final String token, final String serviceUsername, final String secret, final OnActionFinishedListener listener) {
         new HummTask<HummSingleResult<Settings>>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
-                return addService(userId, serviceName, serviceId, token, serviceUsername, secret);
+                return addService(serviceName, serviceId, token, serviceUsername, secret);
             }
 
             @Override
@@ -1501,7 +1579,7 @@ public class UserAPI extends HummAPI {
      * @param likes    Array of Strings with genres that user likes
      * @param dislikes Array of Strings with genres that user likes
      */
-    public HummSingleResult<Settings> addService(final String userId, String serviceName, String serviceId, String serviceToken, String serviceUsername, String secret) {
+    public HummSingleResult<Settings> addService(String serviceName, String serviceUserId, String serviceToken, String serviceUsername, String secret) {
 
         HummSingleResult<Settings> result = new HummSingleResult<>();
         try {
@@ -1510,12 +1588,6 @@ public class UserAPI extends HummAPI {
             }.getType();
             HummAPI.getInstance().updateUserToken();
 
-            if (userId == null) {
-                result.setStatus_response(HttpURLConnectionHelper.KO);
-                result.setError_response("userId parameter is mandatory");
-
-                return result;
-            }
             if (serviceName == null) {
                 result.setStatus_response(HttpURLConnectionHelper.KO);
                 result.setError_response("serviceName parameter is mandatory");
@@ -1523,13 +1595,13 @@ public class UserAPI extends HummAPI {
                 return result;
             }
 
-            if (serviceId == null) {
+            if (serviceUserId == null) {
                 result.setStatus_response(HttpURLConnectionHelper.KO);
                 result.setError_response("serviceId parameter is mandatory");
 
                 return result;
             }
-            if (serviceToken == null ) {
+            if (serviceToken == null) {
                 result.setStatus_response(HttpURLConnectionHelper.KO);
                 result.setError_response("serviceToken parameter is mandatory");
 
@@ -1545,7 +1617,7 @@ public class UserAPI extends HummAPI {
 
             JSONObject parameters = new JSONObject();
             parameters.put("service", serviceName);
-            parameters.put("sid", serviceId);
+//            parameters.put("sid", serviceId);
             parameters.put("token", serviceToken);
             parameters.put("uname", serviceUsername);
             parameters.put("secret", secret);
@@ -1590,7 +1662,7 @@ public class UserAPI extends HummAPI {
         new HummTask<HummSingleResult<User>>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
-                return removeService( serviceName, serviceId);
+                return removeService(serviceName, serviceId);
             }
 
             @Override
@@ -1622,7 +1694,7 @@ public class UserAPI extends HummAPI {
      * @param likes    Array of Strings with genres that user likes
      * @param dislikes Array of Strings with genres that user likes
      */
-    public HummSingleResult<User> removeService( String serviceName, String serviceId) {
+    public HummSingleResult<User> removeService(String serviceName, String serviceId) {
 
         HummSingleResult<User> result = new HummSingleResult<>();
         try {
@@ -1715,11 +1787,9 @@ public class UserAPI extends HummAPI {
                 }
 
                 if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
-                    if (result.getData_response().equalsIgnoreCase(RESPONSE_USER_EXITS))
-                    {
-                         listener.actionFinished(true);
-                    }
-                    else {
+                    if (result.getData_response().equalsIgnoreCase(RESPONSE_USER_EXITS)) {
+                        listener.actionFinished(true);
+                    } else {
 
                         listener.actionFinished(false);
                     }
@@ -1813,11 +1883,9 @@ public class UserAPI extends HummAPI {
                 }
 
                 if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
-                    if (result.getData_response().equalsIgnoreCase(RESPONSE_USER_EXITS))
-                    {
+                    if (result.getData_response().equalsIgnoreCase(RESPONSE_USER_EXITS)) {
                         listener.actionFinished(true);
-                    }
-                    else {
+                    } else {
 
                         listener.actionFinished(false);
                     }
@@ -1910,16 +1978,15 @@ public class UserAPI extends HummAPI {
                 }
 
                 if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
-                    if (result.getData_response().equalsIgnoreCase(RESPONSE_USER_EXITS))
-                    {
+                    if (result.getData_response().equalsIgnoreCase(RESPONSE_PASSWORD_CHANGED)) {
                         listener.actionFinished(true);
-                    }
-                    else {
+                    } else {
 
                         listener.actionFinished(false);
                     }
                 } else {
-                    listener.onError(new HummException(result.getError_response()));
+//                    listener.onError(new HummException(result.getError_response()));
+                    listener.actionFinished(false);
                 }
             }
 
@@ -1938,6 +2005,7 @@ public class UserAPI extends HummAPI {
      */
     public HummResult resetPassword(final String email) {
 
+        HummAPI.setDEBUG(true);
         HummBasicResult result = new HummBasicResult();
         try {
 
@@ -1947,7 +2015,7 @@ public class UserAPI extends HummAPI {
 
             if (email == null) {
                 result.setStatus_response(HttpURLConnectionHelper.KO);
-                result.setError_response("username parameter is mandatory");
+                result.setError_response("email parameter is mandatory");
 
                 return result;
             }
@@ -1955,7 +2023,7 @@ public class UserAPI extends HummAPI {
             JSONObject parameters = new JSONObject();
             parameters.put("email", email);
 
-            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/users/reset", parameters, token, DEBUG);
+            Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/users/reset", parameters, false, token, DEBUG);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
@@ -1982,6 +2050,9 @@ public class UserAPI extends HummAPI {
     }
 
 
+    /*
+    grandtype service
+     */
 
 }
 

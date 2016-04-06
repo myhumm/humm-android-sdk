@@ -805,12 +805,12 @@ public class ArtistAPI extends HummAPI {
      *                 a list of top <code>Song</code> for the given id.
      *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
      */
-    public void getTopSongs(final String idArtist, final int limit, final int offset, final String songType, final OnActionFinishedListener listener) {
+    public void getTopSongs(final String idArtist, final int limit, final int offset, final String songType, final boolean live, final OnActionFinishedListener listener) {
 
         new HummTask<HummMultipleResult<Song>>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
-                return getTopSongs(idArtist, limit, offset, songType);
+                return getTopSongs(idArtist, limit, offset, songType, live);
             }
 
             @Override
@@ -844,7 +844,7 @@ public class ArtistAPI extends HummAPI {
      * @param offset   Offset results by said number (0 by default)
      * @param songType
      */
-    public HummMultipleResult<Song> getTopSongs(String idArtist, int limit, int offset, String songType) {
+    public HummMultipleResult<Song> getTopSongs(String idArtist, int limit, int offset, String songType, boolean live) {
 
 
         HummMultipleResult<Song> result = new HummMultipleResult<>();
@@ -872,6 +872,9 @@ public class ArtistAPI extends HummAPI {
             if (songType != null) {
                 parameters.put("songtype", songType);
             }
+
+            parameters.put("live", live);
+
             Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/artists/" + idArtist + "/topsongs", parameters, token, DEBUG);
 //            result = new Gson().fromJson(reader, listType);
 
