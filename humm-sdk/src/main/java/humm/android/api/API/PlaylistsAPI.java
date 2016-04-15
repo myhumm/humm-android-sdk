@@ -1374,7 +1374,8 @@ public class PlaylistsAPI extends HummAPI {
     }
 
     /**
-     * Search Playlists / Albums; returns a list of playlist / album objects
+     *
+     * Playlists / Albums; returns a list of playlist / album objects
      *
      * @param keyword  search text
      * @param limit    Number of returned results (20 by default)

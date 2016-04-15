@@ -12,6 +12,9 @@ import java.util.List;
  */
 public class User extends Humm {
 
+    public static final String SERVICE_TWITTER = "twitter";
+    public static final String SERVICE_FACEBOOK = "facebook";
+
     protected HashMap account;
     protected String signup;
     protected String last_visit;
@@ -21,6 +24,7 @@ public class User extends Humm {
     protected List<HashMap<String, String>> favourites;
     protected List<HashMap<String, String>> following;
     protected List<HashMap<String, String>> subscriptions;
+    protected List<HashMap<String, HashMap<String, String>>> services;
     protected HashMap<String, List<String>> preferences;
     protected List<User> similar;
 
@@ -123,6 +127,11 @@ public class User extends Humm {
         this.similar = similar;
     }
 
+    public List<HashMap<String, HashMap<String, String>>> getServices() {
+        return services;
+    }
+
+
     public ArrayList<String> getFavouritesIds() {
         ArrayList<String> result = new ArrayList<>();
 
@@ -204,6 +213,39 @@ public class User extends Humm {
             return this.preferences.get("dislike");
         }
 
+        return null;
+    }
+
+    public HashMap<String, String> getTwitterService()
+    {
+        if (this.services == null)
+        {
+            return null;
+        }
+        for (HashMap service : this.services)
+        {
+            if (service.get(SERVICE_TWITTER) != null)
+            {
+                return (HashMap<String, String>) service.get(SERVICE_TWITTER);
+            }
+        }
+        return null;
+    }
+
+    public HashMap<String, String> getFacebookService()
+    {
+        if (this.services == null)
+        {
+            return null;
+        }
+
+        for (HashMap service : this.services)
+        {
+            if (service.get(SERVICE_FACEBOOK) != null)
+            {
+                return (HashMap<String, String>) service.get(SERVICE_FACEBOOK);
+            }
+        }
         return null;
     }
 

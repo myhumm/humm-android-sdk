@@ -15,29 +15,25 @@ import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import humm.android.api.Deserializers.PlaylistDeserializer;
 import humm.android.api.Deserializers.SongDeserializer;
 import humm.android.api.HttpURLConnectionHelper;
 import humm.android.api.HummAPI;
 import humm.android.api.HummException;
+import humm.android.api.HummTask;
 import humm.android.api.Model.Artist;
 import humm.android.api.Model.HummBasicResult;
 import humm.android.api.Model.HummMultipleResult;
 import humm.android.api.Model.HummResult;
 import humm.android.api.Model.HummSingleResult;
 import humm.android.api.Model.LoginInfo;
-import humm.android.api.Model.Playlist;
-import humm.android.api.Model.PlaylistOwnerHashMap;
 import humm.android.api.Model.PlaylistOwnerInt;
 import humm.android.api.Model.PlaylistOwnerList;
 import humm.android.api.Model.Settings;
 import humm.android.api.Model.Song;
 import humm.android.api.Model.User;
 import humm.android.api.OnActionFinishedListener;
-import humm.android.api.HummTask;
 
 /**
  * Created by josealonsogarcia on 24/11/15.
@@ -1579,7 +1575,7 @@ public class UserAPI extends HummAPI {
      * @param likes    Array of Strings with genres that user likes
      * @param dislikes Array of Strings with genres that user likes
      */
-    public HummSingleResult<Settings> addService(String serviceName, String serviceUserId, String serviceToken, String serviceUsername, String secret) {
+    public HummSingleResult<Settings> addService(String serviceName, String serviceId, String serviceToken, String serviceUsername, String secret) {
 
         HummSingleResult<Settings> result = new HummSingleResult<>();
         try {
@@ -1595,7 +1591,7 @@ public class UserAPI extends HummAPI {
                 return result;
             }
 
-            if (serviceUserId == null) {
+            if (serviceId == null) {
                 result.setStatus_response(HttpURLConnectionHelper.KO);
                 result.setError_response("serviceId parameter is mandatory");
 
@@ -1617,7 +1613,7 @@ public class UserAPI extends HummAPI {
 
             JSONObject parameters = new JSONObject();
             parameters.put("service", serviceName);
-//            parameters.put("sid", serviceId);
+            parameters.put("sid", serviceId);
             parameters.put("token", serviceToken);
             parameters.put("uname", serviceUsername);
             parameters.put("secret", secret);

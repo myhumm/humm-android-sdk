@@ -9,7 +9,6 @@ import org.json.JSONObject;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -131,7 +130,9 @@ public class HttpURLConnectionHelper {
 //        Log.d("HTTPURLConnection", host);
 
 //        conn.setRequestProperty("Accept", "application/json");
-//        conn.setRequestProperty("Content-Type", "x-www-form-urlencoded");
+        if (!getParams) {
+            conn.setRequestProperty("Content-Type", "application/json");
+        }
         if (auth_token != null) {
             conn.setRequestProperty("Authorization", auth_token);
         }
