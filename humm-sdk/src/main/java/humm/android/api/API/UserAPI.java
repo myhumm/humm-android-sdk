@@ -1531,6 +1531,103 @@ public class UserAPI extends HummAPI {
     }
 
     /**
+     * Put genres to current user
+     *
+     * @param likes    Array of Strings with genres that user likes
+     * @param dislikes Array of Strings with genres that user likes
+     * @param listener called when action is completed or when happens a error. The parameter of onComplete method is
+     *                 a list of <code>PlaylistOwnerInt</code>.
+     *                 Is guaranteed that is called in main thread, so is safe call UI elements inside it.
+     */
+    public void putLang(final String lang, final OnActionFinishedListener listener) {
+        new HummTask<HummSingleResult<LoginInfo>>(new HummTask.Job() {
+            @Override
+            public Object onStart() throws Exception {
+                return putLang(lang);
+            }
+
+            @Override
+            public void onComplete(Object object) {
+                HummSingleResult<LoginInfo> result = (HummSingleResult<LoginInfo>) object;
+
+                if (result == null) {
+                    listener.actionFinished(null);
+                    return;
+                }
+
+                if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
+                    listener.actionFinished(result.getData_response());
+                } else {
+                    listener.onError(new HummException(result.getError_response()));
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                listener.onError(new HummException(e.getLocalizedMessage()));
+            }
+        }).start();
+    }
+
+    /**
+     * Get a list of recommended playlists / albums; returns a list of playlist / album objects
+     *
+     * @param likes    Array of Strings with genres that user likes
+     * @param dislikes Array of Strings with genres that user likes
+     */
+    public HummSingleResult<LoginInfo> putLang(String lang) {
+
+        HummSingleResult<LoginInfo> result = new HummSingleResult<>();
+        try {
+
+            Type listType = new TypeToken<HummSingleResult<LoginInfo>>() {
+            }.getType();
+            HummAPI.getInstance().updateUserToken();
+
+            if (lang == null) {
+                result.setStatus_response(HttpURLConnectionHelper.KO);
+                result.setError_response("lang parameter is mandatory");
+
+                return result;
+            }
+
+            JSONObject preferences = new JSONObject();
+
+
+            preferences.put("lang", lang);
+
+            JSONObject parameters = new JSONObject();
+            parameters.put("account", preferences);
+
+            Reader reader = HttpURLConnectionHelper.patchHttpConnection(endpoint + "/users/me/settings", parameters, false, token, DEBUG);
+            result = new Gson().fromJson(reader, listType);
+
+        } catch (IOException ex) {
+            // HttpUrlConnection will throw an IOException if any 4XX
+            // response is sent. If we request the status again, this
+            // time the internal status will be properly set, and we'll be
+            // able to retrieve it.
+            Log.e("Debug", "error " + ex.getMessage(), ex);
+            //android bug with 401
+            result.setStatus_response(HttpURLConnectionHelper.KO);
+            result.setError_response("Unauthorized");
+
+        } catch (JSONException e) {
+            Log.e("Debug", "error " + e.getMessage(), e);
+            result.setStatus_response(HttpURLConnectionHelper.KO);
+            result.setError_response("error in params");
+        } catch (Exception e) {
+            Log.e("ERROR", "error " + e.getMessage(), e);
+            result.setStatus_response(HttpURLConnectionHelper.KO);
+            result.setError_response("sync error");
+        }
+
+        return result;
+    }
+
+
+
+    /**
      * Add service to user
      *
      * @param likes    Array of Strings with genres that user likes
