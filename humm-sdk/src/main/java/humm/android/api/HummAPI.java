@@ -1,31 +1,18 @@
 package humm.android.api;
 
-import android.net.Uri;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import humm.android.api.API.ArtistAPI;
+import humm.android.api.API.ChannelsAPI;
+import humm.android.api.API.DirectMessagesAPI;
 import humm.android.api.API.PlaylistsAPI;
 import humm.android.api.API.RadioAPI;
 import humm.android.api.API.SongsAPI;
 import humm.android.api.API.UserAPI;
-import humm.android.api.Model.HummMultipleResult;
 import humm.android.api.Model.HummSingleResult;
 import humm.android.api.Model.LoginInfo;
-import humm.android.api.Model.PlaylistOwnerList;
-import humm.android.api.Model.Song;
 
 /**
  * Created by josealonsogarcia on 24/11/15.
@@ -50,6 +37,8 @@ public class HummAPI {
     private static PlaylistsAPI playlistsAPI = PlaylistsAPI.getInstance();
     private static SongsAPI songsAPI = SongsAPI.getInstance();
     private static RadioAPI radioAPI = RadioAPI.getInstance();
+    private static ChannelsAPI channelsAPI = ChannelsAPI.getInstance();
+    private static DirectMessagesAPI directMessagesAPI = DirectMessagesAPI.getInstance();
 
     public static HummAPI getInstance() {
         if (instance == null) {
@@ -63,7 +52,9 @@ public class HummAPI {
     protected HummAPI() {
         clientId = "5433be703acd3952a3e9ec28";
         grantType = "password";
-        endpoint = "http://api.myhumm.com/v2";
+//        endpoint = "http://api.myhumm.com/v2";
+        endpoint = "http://hummchannels.azurewebsites.net/v2";
+//        endpoint = "http://192.168.0.15:8080/v2";
         token_expires = 0;
     }
 
@@ -227,7 +218,6 @@ public class HummAPI {
     }
 
 
-
     public ArtistAPI getArtist() {
         return artistAPI;
     }
@@ -244,9 +234,16 @@ public class HummAPI {
         return playlistsAPI;
     }
 
-    public RadioAPI getRadio()
-    {
+    public RadioAPI getRadio() {
         return radioAPI;
+    }
+
+    public ChannelsAPI getChannelsAPI() {
+        return channelsAPI;
+    }
+
+    public DirectMessagesAPI getDirectMessagesAPI() {
+        return directMessagesAPI;
     }
 
     public static boolean isDEBUG() {
