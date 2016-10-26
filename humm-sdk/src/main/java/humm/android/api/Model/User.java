@@ -1,5 +1,8 @@
 package humm.android.api.Model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.internal.LinkedTreeMap;
 
 import java.util.ArrayList;
@@ -10,7 +13,7 @@ import java.util.List;
 /**
  * Created by josealonsogarcia on 28/9/15.
  */
-public class User extends Humm {
+public class User extends Humm implements Parcelable {
 
     public static final String SERVICE_TWITTER = "twitter";
     public static final String SERVICE_FACEBOOK = "facebook";
@@ -216,37 +219,95 @@ public class User extends Humm {
         return null;
     }
 
-    public HashMap<String, String> getTwitterService()
-    {
-        if (this.services == null)
-        {
+    public HashMap<String, String> getTwitterService() {
+        if (this.services == null) {
             return null;
         }
-        for (HashMap service : this.services)
-        {
-            if (service.get(SERVICE_TWITTER) != null)
-            {
+        for (HashMap service : this.services) {
+            if (service.get(SERVICE_TWITTER) != null) {
                 return (HashMap<String, String>) service.get(SERVICE_TWITTER);
             }
         }
         return null;
     }
 
-    public HashMap<String, String> getFacebookService()
-    {
-        if (this.services == null)
-        {
+    public HashMap<String, String> getFacebookService() {
+        if (this.services == null) {
             return null;
         }
 
-        for (HashMap service : this.services)
-        {
-            if (service.get(SERVICE_FACEBOOK) != null)
-            {
+        for (HashMap service : this.services) {
+            if (service.get(SERVICE_FACEBOOK) != null) {
                 return (HashMap<String, String>) service.get(SERVICE_FACEBOOK);
             }
         }
         return null;
+    }
+
+    public static final Parcelable.Creator<User> CREATOR
+            = new Parcelable.Creator<User>() {
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+        dest.writeString(get_id());
+        dest.writeMap(account);
+        dest.writeString(signup);
+        dest.writeString(last_visit);
+        dest.writeInt(featured ? 0 : 1);
+        dest.writeList(played);
+        dest.writeList(genres);
+        dest.writeList(favourites);
+        dest.writeList(following);
+        dest.writeList(subscriptions);
+        dest.writeList(services);
+        dest.writeMap(preferences);
+        dest.writeList(similar);
+
+    }
+
+    private User(Parcel in) {
+        set_id(in.readString());
+        account = new HashMap();
+        in.readMap(account, null);
+        signup = in.readString();
+        last_visit = in.readString();
+        if (in.readInt() == 0) {
+            featured = true;
+        } else {
+            featured = false;
+        }
+
+        played = new ArrayList<>();
+        in.readList(played, null);
+        genres = new ArrayList<>();
+        in.readList(genres, null);
+        favourites = new ArrayList<>();
+        in.readList(favourites, null);
+        following = new ArrayList<>();
+        in.readList(following, null);
+        subscriptions = new ArrayList<>();
+        in.readList(subscriptions, null);
+        services = new ArrayList<>();
+        in.readList(services, null);
+        preferences = new HashMap<>();
+        in.readMap(preferences, null);
+        similar = new ArrayList<>();
+        in.readList(similar, null);
+
     }
 
 }
