@@ -125,11 +125,11 @@ public class DirectMessagesAPI extends HummAPI {
         return result;
     }
 
-    public void getConversation(final String userId, final String lastMessageId, final OnActionFinishedListener listener) {
+    public void getConversation(final String userId, final String username, final String lastMessageId, final OnActionFinishedListener listener) {
         new HummTask<MessageMultipleResult<Message>>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
-                return getConversation(userId, lastMessageId);
+                return getConversation(userId, username, lastMessageId);
             }
 
             @Override
@@ -156,7 +156,7 @@ public class DirectMessagesAPI extends HummAPI {
         }).start();
     }
 
-    public MessageMultipleResult<Message> getConversation(String userId, String lastMessageId) {
+    public MessageMultipleResult<Message> getConversation(String userId, String username, String lastMessageId) {
 
         MessageMultipleResult<Message> result = new MessageMultipleResult<Message>();
         try {
@@ -169,13 +169,14 @@ public class DirectMessagesAPI extends HummAPI {
 
             JSONObject parameters = new JSONObject();
             parameters.put("uid", userId);
+            parameters.put("uname", username);
             if (lastMessageId != null) {
                 parameters.put("mid", lastMessageId);
             }
 //            parameters.put("client_id", clientId);
 
-            Log.d("DEBUG", "uid = " + userId);
-            Log.d("DEBUG", "mid = " + lastMessageId);
+//            Log.d("DEBUG", "uid = " + userId);
+//            Log.d("DEBUG", "mid = " + lastMessageId);
 
             Gson gson = new GsonBuilder()
                     .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").create();
