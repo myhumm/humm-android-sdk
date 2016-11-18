@@ -2399,6 +2399,86 @@ public class UserAPI extends HummAPI {
         return result;
     }
 
+    public void findUserChannels(final OnActionFinishedListener listener) {
+        new HummTask<HummSingleResult<User>>(new HummTask.Job() {
+            @Override
+            public Object onStart() throws Exception {
+                return findUserChannels();
+            }
+
+            @Override
+            public void onComplete(Object object) {
+                HummSingleResult<User> result = (HummSingleResult<User>) object;
+
+                if (result == null) {
+                    listener.actionFinished(null);
+                    return;
+                }
+
+                if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
+                    listener.actionFinished(result.getData_response());
+                } else {
+                    listener.onError(new HummException(result.getError_response()));
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                listener.onError(new HummException(e.getLocalizedMessage()));
+            }
+        }).start();
+    }
+
+    /**
+     * Get a list of songs featured by Humm; returns a list of song objects
+     *
+     * @param limit  Number of returned results (no used)
+     * @param offset Offset results by said number (0 by default)
+     */
+    public HummSingleResult<User> findUserChannels() {
+
+        HummSingleResult<User> result = new HummSingleResult<>();
+        try {
+
+            Type listType = new TypeToken<HummSingleResult<User>>() {
+            }.getType();
+//            HummAPI.getInstance().updateUserToken();
+
+            Log.d("DEBUG", token);
+            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/users/channels" , null, token, DEBUG);
+            result = new Gson().fromJson(reader, listType);
+
+            result.setStatus_response(HttpURLConnectionHelper.OK);
+
+
+        } catch (IOException ex) {
+            // HttpUrlConnection will throw an IOException if any 4XX
+            // response is sent. If we request the status again, this
+            // time the internal status will be properly set, and we'll be
+            // able to retrieve it.
+            Log.e("Debug", "error " + ex.getMessage(), ex);
+            //android bug with 401
+
+            result.setStatus_response(HttpURLConnectionHelper.KO);
+            result.setError_response("Unauthorized");
+
+        } catch (JSONException e) {
+            Log.e("Debug", "error " + e.getMessage(), e);
+
+            result.setStatus_response(HttpURLConnectionHelper.KO);
+            result.setError_response("error in params");
+        } catch (Exception e) {
+            Log.e("ERROR", "error " + e.getMessage(), e);
+
+            result.setStatus_response(HttpURLConnectionHelper.KO);
+            result.setError_response("sync error");
+
+        }
+
+
+        return result;
+    }
+
 
 }
 

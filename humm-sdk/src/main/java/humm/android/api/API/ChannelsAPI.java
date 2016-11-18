@@ -41,11 +41,11 @@ public class ChannelsAPI extends HummAPI {
         return instance;
     }
 
-    public void getChannels(final OnActionFinishedListener listener) {
+    public void getPopularChannels(final OnActionFinishedListener listener) {
         new HummTask<ChatMultipleResult<Channel>>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
-                return getChannels();
+                return getPopularChannels();
             }
 
             @Override
@@ -72,7 +72,7 @@ public class ChannelsAPI extends HummAPI {
         }).start();
     }
 
-    public ChatMultipleResult<Channel> getChannels() {
+    public ChatMultipleResult<Channel> getPopularChannels() {
 
         ChatMultipleResult<Channel> result = new ChatMultipleResult<Channel>();
         try {
@@ -331,6 +331,85 @@ public class ChannelsAPI extends HummAPI {
                     .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").create();
 
             result = gson.fromJson(reader, listType);
+
+        } catch (IOException ex) {
+            // HttpUrlConnection will throw an IOException if any 4XX
+            // response is sent. If we request the status again, this
+            // time the internal status will be properly set, and we'll be
+            // able to retrieve it.
+            Log.e("Debug", "error " + ex.getMessage(), ex);
+            //android bug with 401
+
+//            result.setStatus_response(HttpURLConnectionHelper.KO);
+//            result.setError_response("Unauthorized");
+
+        } catch (JSONException e) {
+            Log.e("Debug", "error " + e.getMessage(), e);
+
+//            result.setStatus_response(HttpURLConnectionHelper.KO);
+//            result.setError_response("error in params");
+        } catch (Exception e) {
+            Log.e("ERROR", "error " + e.getMessage(), e);
+
+//            result.setStatus_response(HttpURLConnectionHelper.KO);
+//            result.setError_response("sync error");
+
+        }
+
+
+        return result;
+    }
+
+    public void createChannel(final String nameChannel, final String descriptionChannel, final boolean isPrivateChannel, final OnActionFinishedListener listener) {
+        new HummTask<ChatResult<Channel>>(new HummTask.Job() {
+            @Override
+            public Object onStart() throws Exception {
+                return createChannel(nameChannel, descriptionChannel, isPrivateChannel);
+            }
+
+            @Override
+            public void onComplete(Object object) {
+                ChatResult<Channel> result = (ChatResult<Channel>) object;
+
+
+                if (result == null) {
+                    listener.actionFinished(null);
+                    return;
+                }
+
+                if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus())) {
+                    listener.actionFinished(result.getChannel());
+                } else {
+                    listener.onError(new HummException("Error"));
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                listener.onError(new HummException(e.getLocalizedMessage()));
+            }
+        }).start();
+    }
+
+    public ChatResult<Channel> createChannel(final String nameChannel, final String descriptionChannel, final boolean isPrivateChannel) {
+
+        ChatResult<Channel> result = new ChatResult<Channel>();
+        try {
+
+            Type listType = new TypeToken<ChatResult<Channel>>() {
+            }.getType();
+
+
+//            HummAPI.getInstance().updateUserToken();
+
+            JSONObject parameters = new JSONObject();
+            parameters.put("name", nameChannel);
+            parameters.put("description", descriptionChannel);
+            parameters.put("private", isPrivateChannel);
+
+//            Log.d("DEBUG", token);
+            Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/channels/add", parameters, false, token, DEBUG);
+            result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
             // HttpUrlConnection will throw an IOException if any 4XX

@@ -30,8 +30,17 @@ public class User extends Humm implements Parcelable {
     protected List<HashMap<String, HashMap<String, String>>> services;
     protected HashMap<String, List<String>> preferences;
     protected List<User> similar;
+    protected List<Channel> channels;
 
     public User() {
+    }
+
+    public List<Channel> getChannels() {
+        return channels;
+    }
+
+    public void setChannels(List<Channel> channels) {
+        this.channels = channels;
     }
 
     public HashMap getAccount() {
