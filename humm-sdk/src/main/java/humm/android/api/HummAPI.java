@@ -53,8 +53,8 @@ public class HummAPI {
         clientId = "5433be703acd3952a3e9ec28";
         grantType = "password";
 //        endpoint = "http://api.myhumm.com/v2";
-        endpoint = "http://hummchannels.azurewebsites.net/v2";
-//        endpoint = "http://192.168.0.15:8080/v2";
+//        endpoint = "http://hummchannels.azurewebsites.net/v2";
+        endpoint = "http://192.168.0.20:8080/v2";
         token_expires = 0;
     }
 
