@@ -11,6 +11,7 @@ import humm.android.api.API.PlaylistsAPI;
 import humm.android.api.API.RadioAPI;
 import humm.android.api.API.SongsAPI;
 import humm.android.api.API.UserAPI;
+import humm.android.api.API.FilesAPI;
 import humm.android.api.Model.HummSingleResult;
 import humm.android.api.Model.LoginInfo;
 
@@ -38,6 +39,7 @@ public class HummAPI {
     private static SongsAPI songsAPI = SongsAPI.getInstance();
     private static RadioAPI radioAPI = RadioAPI.getInstance();
     private static ChannelsAPI channelsAPI = ChannelsAPI.getInstance();
+    private static FilesAPI filesAPI = FilesAPI.getInstance();
     private static DirectMessagesAPI directMessagesAPI = DirectMessagesAPI.getInstance();
 
     public static HummAPI getInstance() {
@@ -54,7 +56,7 @@ public class HummAPI {
         grantType = "password";
 //        endpoint = "http://api.myhumm.com/v2";
         endpoint = "http://hummchannels.azurewebsites.net/v2";
-//        endpoint = "http://192.168.0.15:8080/v2";
+        //endpoint = "http://192.168.1.106:8080/v2";
         token_expires = 0;
     }
 
@@ -244,6 +246,10 @@ public class HummAPI {
 
     public DirectMessagesAPI getDirectMessagesAPI() {
         return directMessagesAPI;
+    }
+
+    public FilesAPI getFilesAPI() {
+        return filesAPI;
     }
 
     public static boolean isDEBUG() {
