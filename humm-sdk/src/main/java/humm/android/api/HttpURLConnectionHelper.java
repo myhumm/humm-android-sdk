@@ -37,7 +37,6 @@ public class HttpURLConnectionHelper {
         if (debug) {
             Log.d("HUMM_API", "GET petition to " + host);
         }
-//        Log.d("DEBUG", host);
         URL url = new URL(host);
         conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
