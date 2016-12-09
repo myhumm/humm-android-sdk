@@ -1,5 +1,8 @@
 package humm.android.api.Model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,7 +11,7 @@ import java.util.HashMap;
  * Created by josealonsogarcia on 6/10/16.
  */
 
-public class Message extends Humm {
+public class Message extends Humm implements Parcelable {
 
         /*
     {"__v":0,
@@ -213,5 +216,87 @@ public class Message extends Humm {
         return null;
     }
 
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+//    private String message;
+//    private String type;
+//    private Date date;
+//    private HashMap attributes;
+//    private HashMap owner;
+//    private HashMap channel;
+//    private HashMap to;
+//    private ArrayList tags;
+//    private ArrayList reply_to;
+//    private ArrayList links;
+//    private ArrayList channel_mentions;
+//    private ArrayList group_mentions;
+//    private ArrayList mentions;
+//    private ArrayList fav;
+//
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+        dest.writeString(get_id());
+        dest.writeString(message);
+        dest.writeString(type);
+        dest.writeSerializable(date);
+        dest.writeMap(attributes);
+        dest.writeMap(owner);
+        dest.writeMap(channel);
+        dest.writeMap(to);
+        dest.writeList(tags);
+        dest.writeList(reply_to);
+        dest.writeList(links);
+        dest.writeList(channel_mentions);
+        dest.writeList(group_mentions);
+        dest.writeList(mentions);
+        dest.writeList(fav);
+
+    }
+
+    public static final Parcelable.Creator<Message> CREATOR
+            = new Parcelable.Creator<Message>() {
+        public Message createFromParcel(Parcel in) {
+            return new Message(in);
+        }
+
+        public Message[] newArray(int size) {
+            return new Message[size];
+        }
+    };
+
+    private Message(Parcel in) {
+        set_id(in.readString());
+        message = in.readString();
+        type = in.readString();
+        date = (java.util.Date) in.readSerializable();
+        attributes = new HashMap();
+        in.readMap(attributes, null);
+        owner = new HashMap();
+        in.readMap(owner, null);
+        channel = new HashMap();
+        in.readMap(channel, null);
+        to = new HashMap();
+        in.readMap(to, null);
+        tags = new ArrayList<>();
+        in.readList(tags, null);
+        reply_to = new ArrayList<>();
+        in.readList(reply_to, null);
+        links = new ArrayList<>();
+        in.readList(links, null);
+        channel_mentions = new ArrayList<>();
+        in.readList(channel_mentions, null);
+        group_mentions = new ArrayList<>();
+        in.readList(group_mentions, null);
+        mentions = new ArrayList<>();
+        in.readList(mentions, null);
+        fav = new ArrayList<>();
+        in.readList(fav, null);
+    }
 
 }
