@@ -550,12 +550,12 @@ public class ChannelsAPI extends HummAPI {
         }).start();
     }
 
-    public MessageMultipleResult<Channel> tracksFromChannel(String channelId) {
+    public MessageMultipleResult<Message> tracksFromChannel(String channelId) {
 
-        MessageMultipleResult<Channel> result = new MessageMultipleResult<Channel>();
+        MessageMultipleResult<Message> result = new MessageMultipleResult<Message>();
         try {
 
-            Type listType = new TypeToken<MessageMultipleResult<Channel>>() {
+            Type listType = new TypeToken<MessageMultipleResult<Message>>() {
             }.getType();
 
 
