@@ -136,7 +136,7 @@ public class HttpURLConnectionHelper {
             conn.setRequestProperty("Authorization", auth_token);
         }
 
-        if (!getParams) {
+        if (!getParams && params != null) {
             OutputStream out = new BufferedOutputStream(conn.getOutputStream());
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
             writer.write(params.toString());

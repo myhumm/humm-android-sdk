@@ -404,7 +404,7 @@ public class ChannelsAPI extends HummAPI {
 
 //            HummAPI.getInstance().updateUserToken();
 
-            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/channels/" + channelId + "/leave", null, token, true);
+            Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/channels/" + channelId + "/leave", null, false, token, true);
 
             Gson gson = new GsonBuilder()
                     .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").create();
