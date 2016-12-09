@@ -198,7 +198,7 @@ public class Message extends Humm {
         }
         return null;
     }
-    
+
     public String getAttributesAvatar() {
         if (this.attributes != null && this.attributes.get("avatar") != null) {
             return (String) this.attributes.get("avatar");
