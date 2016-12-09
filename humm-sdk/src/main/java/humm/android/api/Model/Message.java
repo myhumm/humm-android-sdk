@@ -148,53 +148,70 @@ public class Message extends Humm {
         this.fav = fav;
     }
 
-    public String getOwnerId()
-    {
-        if (this.owner != null)
-        {
-            return  (String) this.owner.get("uid");
+    public String getOwnerId() {
+        if (this.owner != null) {
+            return (String) this.owner.get("uid");
         }
         return null;
     }
 
-    public String getOwnerName()
-    {
-        if (this.owner != null)
-        {
-            return  (String) this.owner.get("uname");
+    public String getOwnerName() {
+        if (this.owner != null) {
+            return (String) this.owner.get("uname");
         }
         return null;
     }
 
-    public String getOwnerAvatar()
-    {
-        if (this.owner != null)
-        {
-            return  (String) this.owner.get("uavatar");
+    public String getOwnerAvatar() {
+        if (this.owner != null) {
+            return (String) this.owner.get("uavatar");
         }
         return null;
     }
 
-    public String getChannelId()
-    {
-        if (this.channel != null)
-        {
-            return  (String) this.channel.get("cid");
+    public String getChannelId() {
+        if (this.channel != null) {
+            return (String) this.channel.get("cid");
         }
         return null;
 
     }
 
-    public String getToId()
-    {
-        if (this.to != null)
-        {
-            return  (String) this.to.get("uid");
+    public String getToId() {
+        if (this.to != null) {
+            return (String) this.to.get("uid");
         }
         return null;
 
     }
 
+    public String getAttributesName() {
+        if (this.attributes != null && this.attributes.get("name") != null) {
+            return (String) this.attributes.get("name");
+        }
+        return null;
+    }
+
+    public String getAttributesArtist() {
+        if (this.attributes != null && this.attributes.get("artist") != null) {
+            return (String) this.attributes.get("artist");
+        }
+        return null;
+    }
+    
+    public String getAttributesAvatar() {
+        if (this.attributes != null && this.attributes.get("avatar") != null) {
+            return (String) this.attributes.get("avatar");
+        }
+        return null;
+    }
+
+    public String getAttributesBackdrop() {
+        if (this.attributes != null && this.attributes.get("backdrop") != null) {
+            return (String) this.attributes.get("backdrop");
+        }
+        return null;
+    }
 
 
 }
