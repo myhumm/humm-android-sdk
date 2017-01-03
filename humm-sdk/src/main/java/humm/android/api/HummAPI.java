@@ -1,5 +1,7 @@
 package humm.android.api;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.util.Date;
@@ -7,11 +9,11 @@ import java.util.Date;
 import humm.android.api.API.ArtistAPI;
 import humm.android.api.API.ChannelsAPI;
 import humm.android.api.API.DirectMessagesAPI;
+import humm.android.api.API.FilesAPI;
 import humm.android.api.API.PlaylistsAPI;
 import humm.android.api.API.RadioAPI;
 import humm.android.api.API.SongsAPI;
 import humm.android.api.API.UserAPI;
-import humm.android.api.API.FilesAPI;
 import humm.android.api.Model.HummSingleResult;
 import humm.android.api.Model.LoginInfo;
 
@@ -24,6 +26,7 @@ public class HummAPI {
     protected static String TAG = "HUMM_API";
 
     private static HummAPI instance = null;
+    private static Context context = null;
 
     protected static String clientId;
     protected static String grantType;
@@ -42,6 +45,10 @@ public class HummAPI {
     private static FilesAPI filesAPI = FilesAPI.getInstance();
     private static DirectMessagesAPI directMessagesAPI = DirectMessagesAPI.getInstance();
 
+    private static String SHARED_PREFERENCES_SDK = "SharedPreferencesSDK";
+    private static String REFRESH_TOKEN_PREFERENCES = "humm_api_refresh_token";
+    private static String TOKEN_PREFERENCES = "humm_api_token";
+
     public static HummAPI getInstance() {
         if (instance == null) {
             instance = new HummAPI();
@@ -50,7 +57,6 @@ public class HummAPI {
         return instance;
     }
 
-
     protected HummAPI() {
         clientId = "5433be703acd3952a3e9ec28";
         grantType = "password";
@@ -58,6 +64,39 @@ public class HummAPI {
         //endpoint = "http://192.168.1.106:8080/v2";
 
         token_expires = 0;
+    }
+
+    public static String getEndpoint() {
+        return endpoint;
+    }
+
+    public static void setEndpoint(String endpoint) {
+        HummAPI.endpoint = endpoint;
+    }
+
+    public void init(Context context) {
+        this.context = context;
+
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_SDK, Context.MODE_PRIVATE);
+        refresh_token = sharedPreferences.getString(REFRESH_TOKEN_PREFERENCES, null);
+        token = sharedPreferences.getString(TOKEN_PREFERENCES, null);
+
+        if (refresh_token != null) {
+
+            getUser().refreshToken(new OnActionFinishedListener() {
+                @Override
+                public void actionFinished(Object result) {
+                    LoginInfo loginInfo = (LoginInfo) result;
+                    updateLoginData(loginInfo);
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Log.e("HUMM_API", e.getLocalizedMessage());
+                }
+            });
+        }
+
     }
 
     /**
@@ -210,15 +249,37 @@ public class HummAPI {
         if (loginInfo != null) {
             token = loginInfo.getAccess_token();
             refresh_token = loginInfo.getRefresh_token();
+            if (context != null) {
+                SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_SDK, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(REFRESH_TOKEN_PREFERENCES, refresh_token);
+                editor.apply();
+            }
+
+            if (token != null)
+            {
+                SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_SDK, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(TOKEN_PREFERENCES, token);
+                editor.apply();
+            }
             token_expires = (int) (new Date().getTime() / 1000) + loginInfo.getExpires_in();
         }
         if (DEBUG) {
             Log.d(TAG, "expires " + token_expires + "");
-            Log.d(TAG, "token" + token + "");
-            Log.d(TAG, "refresh" + refresh_token + "");
+            Log.d(TAG, "token " + token + "");
+            Log.d(TAG, "refresh " + refresh_token + "");
         }
     }
 
+    public static boolean isLogged() {
+        if (refresh_token == null) {
+            SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_SDK, Context.MODE_PRIVATE);
+            return sharedPreferences.getString(REFRESH_TOKEN_PREFERENCES, null) != null;
+        }
+
+        return true;
+    }
 
     public ArtistAPI getArtist() {
         return artistAPI;

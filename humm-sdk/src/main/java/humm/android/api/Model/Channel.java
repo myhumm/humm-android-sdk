@@ -20,6 +20,7 @@ public class Channel extends Humm implements Parcelable {
     protected ArrayList<Member> members;
     protected HashMap owner;
     protected HashMap stats;
+    protected int messagesNotReaded;
 
 
     public String getName() {
@@ -68,6 +69,14 @@ public class Channel extends Humm implements Parcelable {
 
     public void setOwner(HashMap owner) {
         this.owner = owner;
+    }
+
+    public int getMessagesNotReaded() {
+        return messagesNotReaded;
+    }
+
+    public void setMessagesNotReaded(int messagesNotReaded) {
+        this.messagesNotReaded = messagesNotReaded;
     }
 
     public String getOwnerUsername() {
@@ -146,6 +155,7 @@ public class Channel extends Humm implements Parcelable {
         dest.writeString(get_id());
         dest.writeString(name);
         dest.writeString(description);
+        dest.writeInt(messagesNotReaded);
     }
 
 
@@ -164,6 +174,7 @@ public class Channel extends Humm implements Parcelable {
         set_id(in.readString());
         name = in.readString();
         description = in.readString();
+        messagesNotReaded = in.readInt();
     }
 
 }

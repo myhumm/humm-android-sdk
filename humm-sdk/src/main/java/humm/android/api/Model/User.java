@@ -31,6 +31,7 @@ public class User extends Humm implements Parcelable {
     protected HashMap<String, List<String>> preferences;
     protected List<User> similar;
     protected List<Channel> channels;
+    protected List<HashMap<String, String>> messagesNotReaded;
 
     public User() {
     }
@@ -81,6 +82,14 @@ public class User extends Humm implements Parcelable {
 
     public void setSubscriptions(List<HashMap<String, String>> subscriptions) {
         this.subscriptions = subscriptions;
+    }
+
+    public List<HashMap<String, String>> getMessagesNotReaded() {
+        return messagesNotReaded;
+    }
+
+    public void setMessagesNotReaded(List<HashMap<String, String>> messagesNotReaded) {
+        this.messagesNotReaded = messagesNotReaded;
     }
 
     public String getSignup() {

@@ -15,8 +15,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-
-import javax.net.ssl.SSLEngineResult;
+import java.util.HashMap;
+import java.util.List;
 
 import humm.android.api.Deserializers.PlaylistDeserializer;
 import humm.android.api.Deserializers.SongDeserializer;
@@ -25,6 +25,7 @@ import humm.android.api.HummAPI;
 import humm.android.api.HummException;
 import humm.android.api.HummTask;
 import humm.android.api.Model.Artist;
+import humm.android.api.Model.Channel;
 import humm.android.api.Model.HummBasicResult;
 import humm.android.api.Model.HummMultipleResult;
 import humm.android.api.Model.HummResult;
@@ -281,6 +282,33 @@ public class UserAPI extends HummAPI {
         return result;
     }
 
+    public void refreshToken( final OnActionFinishedListener listener) {
+        new HummTask<HummSingleResult<LoginInfo>>(new HummTask.Job() {
+            @Override
+            public Object onStart() throws Exception {
+                return refreshToken();
+            }
+
+            @Override
+            public void onComplete(Object object) {
+
+                HummSingleResult<LoginInfo> loginInfo = (HummSingleResult<LoginInfo>) object;
+                if (loginInfo == null || loginInfo.getData_response() == null || loginInfo.getData_response().getAccess_token() == null) {
+                    listener.actionFinished(null);
+                    return;
+                }
+
+                listener.actionFinished(loginInfo.getData_response());
+            }
+
+            @Override
+            public void onError(Exception e) {
+                listener.onError(new HummException(e.getLocalizedMessage()));
+            }
+        }).start();
+    }
+
+
     public static HummSingleResult<LoginInfo> refreshToken() {
 
         HummSingleResult<LoginInfo> result = new HummSingleResult<>();
@@ -290,11 +318,12 @@ public class UserAPI extends HummAPI {
             }.getType();
 
             JSONObject parameters = new JSONObject();
-            parameters.put("grant_type", grantType);
+            parameters.put("grant_type", "refresh_token");
             parameters.put("client_id", clientId);
             parameters.put("refresh_token", refresh_token);
+            parameters.put("auth_token", token);
 
-            Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/token", parameters, true, null, DEBUG);
+            Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/token", parameters, true, null, true);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
@@ -2416,6 +2445,23 @@ public class UserAPI extends HummAPI {
                 }
 
                 if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus_response())) {
+                    //update the channels messages not readed
+                    User user = result.getData_response();
+
+                    List<Channel> channelsResult = user.getChannels();
+                    List<HashMap<String, String>> messagesResult = user.getMessagesNotReaded();
+
+                    for (Channel channel : channelsResult)
+                    {
+                        for (HashMap messageResult : messagesResult)
+                        {
+                            if (channel.get_id().equalsIgnoreCase((String)messageResult.get("cid")))
+                            {
+                                channel.setMessagesNotReaded(Integer.valueOf(((String) messageResult.get("number"))));
+                            }
+                        }
+                    }
+
                     listener.actionFinished(result.getData_response());
                 } else {
                     listener.onError(new HummException(result.getError_response()));
