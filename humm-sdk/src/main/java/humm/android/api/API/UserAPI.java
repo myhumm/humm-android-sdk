@@ -239,7 +239,7 @@ public class UserAPI extends HummAPI {
             }.getType();
 
 
-            HummAPI.getInstance().updateUserToken();
+//            HummAPI.getInstance().updateUserToken();
 
             JSONObject parameters = new JSONObject();
             parameters.put("grant_type", grantType);
@@ -2569,7 +2569,7 @@ public class UserAPI extends HummAPI {
             }.getType();
             HummAPI.getInstance().updateUserToken();
 
-            Log.d("DEBUG", token);
+//            Log.d("DEBUG", token);
             Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/users/channels/own" , null, token, DEBUG);
             result = new Gson().fromJson(reader, listType);
 

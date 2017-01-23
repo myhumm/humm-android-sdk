@@ -216,6 +216,14 @@ public class HummAPI {
             Log.d(TAG, "updateUserToken");
         }
 
+        if (refresh_token == null)
+        {
+            if (DEBUG)
+            {
+                Log.d(TAG, "refresh_token is null => don't refresh!");
+            }
+            return;
+        }
         int secondsNow = (int) (new Date().getTime() / 1000);
 
         if (DEBUG) {

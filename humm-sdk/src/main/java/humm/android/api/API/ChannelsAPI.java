@@ -439,11 +439,11 @@ public class ChannelsAPI extends HummAPI {
         return result;
     }
 
-    public void createChannel(final String nameChannel, final String descriptionChannel, final boolean isPrivateChannel, final OnActionFinishedListener listener) {
+    public void createChannel(final String nameChannel, final String descriptionChannel, final boolean isPrivateChannel, final String color, final String backdrop, final OnActionFinishedListener listener) {
         new HummTask<ChatResult<Channel>>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
-                return createChannel(nameChannel, descriptionChannel, isPrivateChannel);
+                return createChannel(nameChannel, descriptionChannel, isPrivateChannel, color, backdrop);
             }
 
             @Override
@@ -470,7 +470,7 @@ public class ChannelsAPI extends HummAPI {
         }).start();
     }
 
-    public ChatResult<Channel> createChannel(final String nameChannel, final String descriptionChannel, final boolean isPrivateChannel) {
+    public ChatResult<Channel> createChannel(final String nameChannel, final String descriptionChannel, final boolean isPrivateChannel, final String color, final String backdrop) {
 
         ChatResult<Channel> result = new ChatResult<Channel>();
         try {
@@ -485,6 +485,12 @@ public class ChannelsAPI extends HummAPI {
             parameters.put("name", nameChannel);
             parameters.put("description", descriptionChannel);
             parameters.put("private", isPrivateChannel);
+            if (color != null) {
+                parameters.put("color", color);
+            }
+            if (backdrop != null) {
+                parameters.put("backdrop", backdrop);
+            }
 
 //            Log.d("DEBUG", token);
             Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/channels/add", parameters, false, token, DEBUG);

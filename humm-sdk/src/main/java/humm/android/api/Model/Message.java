@@ -47,6 +47,14 @@ public class Message extends Humm implements Parcelable {
     private ArrayList mentions;
     private ArrayList fav;
 
+    public HashMap getTo() {
+        return to;
+    }
+
+    public void setTo(HashMap to) {
+        this.to = to;
+    }
+
     public String getMessage() {
         return message;
     }
@@ -186,6 +194,15 @@ public class Message extends Humm implements Parcelable {
         }
         return null;
 
+    }
+
+    public boolean getToReaded()
+    {
+        if (this.to != null && this.to.get("read") != null)
+        {
+            return (boolean) this.to.get("read");
+        }
+        return false;
     }
 
     public String getAttributesName() {

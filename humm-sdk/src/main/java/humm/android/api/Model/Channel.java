@@ -21,7 +21,8 @@ public class Channel extends Humm implements Parcelable {
     protected HashMap owner;
     protected HashMap stats;
     protected int messagesNotReaded;
-
+    protected String color;
+    protected String backdrop;
 
     public String getName() {
         return name;
@@ -143,6 +144,21 @@ public class Channel extends Humm implements Parcelable {
         return 0;
     }
 
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public String getBackdrop() {
+        return backdrop;
+    }
+
+    public void setBackdrop(String backdrop) {
+        this.backdrop = backdrop;
+    }
 
     @Override
     public int describeContents() {
@@ -156,6 +172,8 @@ public class Channel extends Humm implements Parcelable {
         dest.writeString(name);
         dest.writeString(description);
         dest.writeInt(messagesNotReaded);
+        dest.writeString(color);
+        dest.writeString(backdrop);
     }
 
 
@@ -175,6 +193,8 @@ public class Channel extends Humm implements Parcelable {
         name = in.readString();
         description = in.readString();
         messagesNotReaded = in.readInt();
+        color = in.readString();
+        backdrop = in.readString();
     }
 
 }
