@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.jfrog.bintray'
+//apply plugin: 'com.jfrog.bintray'
 //apply plugin: 'com.github.dcendents.android-maven'
 
 Properties properties = new Properties()
@@ -30,26 +30,26 @@ ext {
     licenseUrl = 'http://www.apache.org/licenses/MIT.txt'
     allLicenses = ["MIT"]
 }
-bintray {
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
-
-    pkg {
-        repo = 'maven'
-        name = 'humm-sdk'
-
-        version {
-            name = versionNumber
-            desc = 'Bug fixes'
-            vcsTag = versionNumber
-        }
-
-        licenses = ['MIT']
-        vcsUrl = 'https://github.com/myhumm/humm-android-sdk.git'
-        websiteUrl = 'https://github.com/myhumm/humm-android-sdk'
-    }
-    configurations = ['archives']
-}
+//bintray {
+//    user = properties.getProperty("bintray.user")
+//    key = properties.getProperty("bintray.apikey")
+//
+//    pkg {
+//        repo = 'maven'
+//        name = 'humm-sdk'
+//
+//        version {
+//            name = versionNumber
+//            desc = 'Bug fixes'
+//            vcsTag = versionNumber
+//        }
+//
+//        licenses = ['MIT']
+//        vcsUrl = 'https://github.com/myhumm/humm-android-sdk.git'
+//        websiteUrl = 'https://github.com/myhumm/humm-android-sdk'
+//    }
+//    configurations = ['archives']
+//}
 
 project.version = versionNumber;
 
