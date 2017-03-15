@@ -82,19 +82,19 @@ public class HummAPI {
         token = sharedPreferences.getString(TOKEN_PREFERENCES, null);
 
         if (refresh_token != null) {
-
-            getUser().refreshToken(new OnActionFinishedListener() {
-                @Override
-                public void actionFinished(Object result) {
-                    LoginInfo loginInfo = (LoginInfo) result;
-                    updateLoginData(loginInfo);
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    Log.e("HUMM_API", e.getLocalizedMessage());
-                }
-            });
+            updateUserToken();
+//            getUser().refreshToken(new OnActionFinishedListener() {
+//                @Override
+//                public void actionFinished(Object result) {
+//                    LoginInfo loginInfo = (LoginInfo) result;
+//                    updateLoginData(loginInfo);
+//                }
+//
+//                @Override
+//                public void onError(Exception e) {
+//                    Log.e("HUMM_API", e.getLocalizedMessage());
+//                }
+//            });
         }
 
     }
@@ -261,14 +261,9 @@ public class HummAPI {
                 SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_SDK, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString(REFRESH_TOKEN_PREFERENCES, refresh_token);
-                editor.apply();
-            }
-
-            if (token != null)
-            {
-                SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_SDK, Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString(TOKEN_PREFERENCES, token);
+                if (token != null) {
+                    editor.putString(TOKEN_PREFERENCES, token);
+                }
                 editor.apply();
             }
             token_expires = (int) (new Date().getTime() / 1000) + loginInfo.getExpires_in();
