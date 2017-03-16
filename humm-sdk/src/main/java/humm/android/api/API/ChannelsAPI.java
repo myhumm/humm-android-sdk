@@ -168,7 +168,7 @@ public class ChannelsAPI extends HummAPI {
 //            parameters.put("grant_type", grantType);
 //            parameters.put("client_id", clientId);
 
-            Log.d("DEBUG", token);
+//            Log.d("DEBUG", token);
             Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/channels/" + channelId + "/join", parameters, false, token, true);
             result = new Gson().fromJson(reader, listType);
 
