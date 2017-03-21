@@ -282,7 +282,7 @@ public class UserAPI extends HummAPI {
         return result;
     }
 
-    public void refreshToken( final OnActionFinishedListener listener) {
+    public void refreshToken(final OnActionFinishedListener listener) {
         new HummTask<HummSingleResult<LoginInfo>>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
@@ -1657,7 +1657,6 @@ public class UserAPI extends HummAPI {
     }
 
 
-
     /**
      * Add service to user
      *
@@ -2310,7 +2309,7 @@ public class UserAPI extends HummAPI {
             parameters.put("uname", username);
 
             Log.d("DEBUG", token);
-            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/users/get" , parameters, token, DEBUG);
+            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/users/get", parameters, token, DEBUG);
             result = new Gson().fromJson(reader, listType);
 
             result.setStatus_response(HttpURLConnectionHelper.OK);
@@ -2394,7 +2393,7 @@ public class UserAPI extends HummAPI {
             parameters.put("uname", keyword);
 
             Log.d("DEBUG", token);
-            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/users/search" , parameters, token, DEBUG);
+            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/users/search", parameters, token, DEBUG);
             result = new Gson().fromJson(reader, listType);
 
             result.setStatus_response(HttpURLConnectionHelper.OK);
@@ -2428,11 +2427,11 @@ public class UserAPI extends HummAPI {
         return result;
     }
 
-    public void findUserChannels(final OnActionFinishedListener listener) {
+    public void findUserChannels(final int limit, final int offset, final OnActionFinishedListener listener) {
         new HummTask<HummSingleResult<User>>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
-                return findUserChannels();
+                return findUserChannels(limit, offset);
             }
 
             @Override
@@ -2451,12 +2450,9 @@ public class UserAPI extends HummAPI {
                     List<Channel> channelsResult = user.getChannels();
                     List<HashMap<String, String>> messagesResult = user.getMessagesNotReaded();
 
-                    for (Channel channel : channelsResult)
-                    {
-                        for (HashMap messageResult : messagesResult)
-                        {
-                            if (channel.get_id().equalsIgnoreCase((String)messageResult.get("cid")))
-                            {
+                    for (Channel channel : channelsResult) {
+                        for (HashMap messageResult : messagesResult) {
+                            if (channel.get_id().equalsIgnoreCase((String) messageResult.get("cid"))) {
                                 channel.setMessagesNotReaded(Integer.valueOf(((String) messageResult.get("number"))));
                             }
                         }
@@ -2481,16 +2477,19 @@ public class UserAPI extends HummAPI {
      * @param limit  Number of returned results (no used)
      * @param offset Offset results by said number (0 by default)
      */
-    public HummSingleResult<User> findUserChannels() {
+    public HummSingleResult<User> findUserChannels(int limit, int offset) {
 
         HummSingleResult<User> result = new HummSingleResult<>();
         try {
 
             Type listType = new TypeToken<HummSingleResult<User>>() {
             }.getType();
-//            HummAPI.getInstance().updateUserToken();
 
-            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/users/channels" , null, token, DEBUG);
+            JSONObject parameters = new JSONObject();
+            parameters.put("limit", limit);
+            parameters.put("offset", offset);
+
+            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/users/channels", parameters, token, DEBUG);
             result = new Gson().fromJson(reader, listType);
 
 //            result.setStatus_response(HttpURLConnectionHelper.OK);
@@ -2570,7 +2569,7 @@ public class UserAPI extends HummAPI {
             HummAPI.getInstance().updateUserToken();
 
 //            Log.d("DEBUG", token);
-            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/users/channels/own" , null, token, DEBUG);
+            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/users/channels/own", null, token, DEBUG);
             result = new Gson().fromJson(reader, listType);
 
 //            result.setStatus_response(HttpURLConnectionHelper.OK);

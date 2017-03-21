@@ -43,11 +43,11 @@ public class ChannelsAPI extends HummAPI {
         return instance;
     }
 
-    public void getPopularChannels(final OnActionFinishedListener listener) {
+    public void getPopularChannels(final int limit, final int offset, final String section, final OnActionFinishedListener listener) {
         new HummTask<ChatMultipleResult<Channel>>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
-                return getPopularChannels();
+                return getPopularChannels(limit, offset, section);
             }
 
             @Override
@@ -74,7 +74,7 @@ public class ChannelsAPI extends HummAPI {
         }).start();
     }
 
-    public ChatMultipleResult<Channel> getPopularChannels() {
+    public ChatMultipleResult<Channel> getPopularChannels(int limit, int offset, String section) {
 
         ChatMultipleResult<Channel> result = new ChatMultipleResult<Channel>();
         try {
@@ -83,14 +83,16 @@ public class ChannelsAPI extends HummAPI {
             }.getType();
 
 
-//            HummAPI.getInstance().updateUserToken();
-
-//            JSONObject parameters = new JSONObject();
-//            parameters.put("grant_type", grantType);
+            JSONObject parameters = new JSONObject();
+            parameters.put("limit", limit);
+            parameters.put("offset", offset);
+            if (section != null) {
+                parameters.put("section", section);
+            }
 //            parameters.put("client_id", clientId);
 
 //            Log.d("DEBUG", token);
-            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/channels/popular", null, token, DEBUG);
+            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/channels/popular", parameters, token, DEBUG);
             result = new Gson().fromJson(reader, listType);
 
         } catch (IOException ex) {
