@@ -123,6 +123,82 @@ public class ChannelsAPI extends HummAPI {
         return result;
     }
 
+    public void getGenresChannels(final int limit, final int offset, final OnActionFinishedListener listener) {
+        new HummTask<ChatMultipleResult<Channel>>(new HummTask.Job() {
+            @Override
+            public Object onStart() throws Exception {
+                return getGenresChannels(limit, offset);
+            }
+
+            @Override
+            public void onComplete(Object object) {
+                ChatMultipleResult<Channel> result = (ChatMultipleResult<Channel>) object;
+
+
+                if (result == null) {
+                    listener.actionFinished(null);
+                    return;
+                }
+
+                if (HttpURLConnectionHelper.OK.equalsIgnoreCase(result.getStatus())) {
+                    listener.actionFinished(result.getChannel());
+                } else {
+                    listener.onError(new HummException("Error"));
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                listener.onError(new HummException(e.getLocalizedMessage()));
+            }
+        }).start();
+    }
+
+    public ChatMultipleResult<Channel> getGenresChannels(int limit, int offset) {
+
+        ChatMultipleResult<Channel> result = new ChatMultipleResult<Channel>();
+        try {
+
+            Type listType = new TypeToken<ChatMultipleResult<Channel>>() {
+            }.getType();
+
+
+            JSONObject parameters = new JSONObject();
+            parameters.put("limit", limit);
+            parameters.put("offset", offset);
+
+//            Log.d("DEBUG", token);
+            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/channels/genres", parameters, token, DEBUG);
+            result = new Gson().fromJson(reader, listType);
+
+        } catch (IOException ex) {
+            // HttpUrlConnection will throw an IOException if any 4XX
+            // response is sent. If we request the status again, this
+            // time the internal status will be properly set, and we'll be
+            // able to retrieve it.
+            Log.e("Debug", "error " + ex.getMessage(), ex);
+            //android bug with 401
+
+//            result.setStatus_response(HttpURLConnectionHelper.KO);
+//            result.setError_response("Unauthorized");
+
+        } catch (JSONException e) {
+            Log.e("Debug", "error " + e.getMessage(), e);
+
+//            result.setStatus_response(HttpURLConnectionHelper.KO);
+//            result.setError_response("error in params");
+        } catch (Exception e) {
+            Log.e("ERROR", "error " + e.getMessage(), e);
+
+//            result.setStatus_response(HttpURLConnectionHelper.KO);
+//            result.setError_response("sync error");
+
+        }
+
+
+        return result;
+    }
+
 
     public void joinChannel(final String channelId, final OnActionFinishedListener listener) {
         new HummTask<ChatResult<Channel>>(new HummTask.Job() {
