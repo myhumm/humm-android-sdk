@@ -67,4 +67,12 @@ public class UserConversation {
     public void setNum_unread(int num_unread) {
         this.num_unread = num_unread;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        UserConversation userConversation = (UserConversation) obj;
+
+        return userConversation.getUid().equalsIgnoreCase(this.getUid());
+//        return super.equals(obj);
+    }
 }
