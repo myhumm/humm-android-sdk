@@ -12,7 +12,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Type;
-import java.util.HashMap;
 
 import humm.android.api.HttpURLConnectionHelper;
 import humm.android.api.HummAPI;
@@ -21,6 +20,7 @@ import humm.android.api.HummTask;
 import humm.android.api.Model.DMConversationsMultipleResult;
 import humm.android.api.Model.Message;
 import humm.android.api.Model.MessageMultipleResult;
+import humm.android.api.Model.UserConversation;
 import humm.android.api.OnActionFinishedListener;
 
 /**
@@ -44,7 +44,7 @@ public class DirectMessagesAPI extends HummAPI {
 
 
     public void getLastDirectMessages(final OnActionFinishedListener listener) {
-        new HummTask<DMConversationsMultipleResult<HashMap>>(new HummTask.Job() {
+        new HummTask<DMConversationsMultipleResult<UserConversation>>(new HummTask.Job() {
             @Override
             public Object onStart() throws Exception {
                 return getLastDirectMessages();
@@ -52,7 +52,7 @@ public class DirectMessagesAPI extends HummAPI {
 
             @Override
             public void onComplete(Object object) {
-                DMConversationsMultipleResult<HashMap> result = (DMConversationsMultipleResult<HashMap>) object;
+                DMConversationsMultipleResult<UserConversation> result = (DMConversationsMultipleResult<UserConversation>) object;
 
 
                 if (result == null) {
@@ -74,12 +74,12 @@ public class DirectMessagesAPI extends HummAPI {
         }).start();
     }
 
-    public DMConversationsMultipleResult<HashMap> getLastDirectMessages() {
+    public DMConversationsMultipleResult<UserConversation> getLastDirectMessages() {
 
-        DMConversationsMultipleResult<HashMap> result = new DMConversationsMultipleResult<HashMap>();
+        DMConversationsMultipleResult<UserConversation> result = new DMConversationsMultipleResult<UserConversation>();
         try {
 
-            Type listType = new TypeToken<DMConversationsMultipleResult<HashMap>>() {
+            Type listType = new TypeToken<DMConversationsMultipleResult<UserConversation>>() {
             }.getType();
 
 
@@ -90,7 +90,7 @@ public class DirectMessagesAPI extends HummAPI {
 //            parameters.put("client_id", clientId);
 
 //            Log.d("DEBUG", token);
-            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/messages/direct/conversations", null, token, DEBUG);
+            Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/messages/direct/last", null, token, DEBUG);
 
             Gson gson = new GsonBuilder()
                     .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").create();

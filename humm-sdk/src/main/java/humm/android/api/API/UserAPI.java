@@ -2392,11 +2392,10 @@ public class UserAPI extends HummAPI {
             JSONObject parameters = new JSONObject();
             parameters.put("uname", keyword);
 
-            Log.d("DEBUG", token);
             Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/users/search", parameters, token, DEBUG);
             result = new Gson().fromJson(reader, listType);
 
-            result.setStatus_response(HttpURLConnectionHelper.OK);
+//            result.setStatus_response(HttpURLConnectionHelper.OK);
 
 
         } catch (IOException ex) {
