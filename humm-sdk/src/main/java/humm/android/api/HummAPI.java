@@ -216,10 +216,8 @@ public class HummAPI {
             Log.d(TAG, "updateUserToken");
         }
 
-        if (refresh_token == null)
-        {
-            if (DEBUG)
-            {
+        if (refresh_token == null) {
+            if (DEBUG) {
                 Log.d(TAG, "refresh_token is null => don't refresh!");
             }
             return;
@@ -282,6 +280,14 @@ public class HummAPI {
         }
 
         return true;
+    }
+
+    public static void logout() {
+        refresh_token = null;
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_SDK, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove(REFRESH_TOKEN_PREFERENCES);
+        editor.commit();
     }
 
     public ArtistAPI getArtist() {
