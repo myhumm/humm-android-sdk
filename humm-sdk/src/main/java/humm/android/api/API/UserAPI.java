@@ -2481,6 +2481,8 @@ public class UserAPI extends HummAPI {
         HummSingleResult<User> result = new HummSingleResult<>();
         try {
 
+            HummAPI.getInstance().updateUserToken();
+
             Type listType = new TypeToken<HummSingleResult<User>>() {
             }.getType();
 

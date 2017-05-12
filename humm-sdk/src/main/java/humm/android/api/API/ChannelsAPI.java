@@ -240,7 +240,7 @@ public class ChannelsAPI extends HummAPI {
             }.getType();
 
 
-//            HummAPI.getInstance().updateUserToken();
+            HummAPI.getInstance().updateUserToken();
 
             JSONObject parameters = new JSONObject();
 //            parameters.put("grant_type", grantType);
@@ -318,7 +318,7 @@ public class ChannelsAPI extends HummAPI {
             }.getType();
 
 
-//            HummAPI.getInstance().updateUserToken();
+            HummAPI.getInstance().updateUserToken();
 
             JSONObject parameters = new JSONObject();
             parameters.put("limit", limit);
@@ -403,7 +403,7 @@ public class ChannelsAPI extends HummAPI {
             }.getType();
 
 
-//            HummAPI.getInstance().updateUserToken();
+            HummAPI.getInstance().updateUserToken();
 
             Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/channels/" + channelId, null, token, true);
 
@@ -480,7 +480,7 @@ public class ChannelsAPI extends HummAPI {
             }.getType();
 
 
-//            HummAPI.getInstance().updateUserToken();
+            HummAPI.getInstance().updateUserToken();
 
             Reader reader = HttpURLConnectionHelper.postHttpConnection(endpoint + "/channels/" + channelId + "/leave", null, false, token, true);
 
@@ -557,7 +557,7 @@ public class ChannelsAPI extends HummAPI {
             }.getType();
 
 
-//            HummAPI.getInstance().updateUserToken();
+            HummAPI.getInstance().updateUserToken();
 
             JSONObject parameters = new JSONObject();
             parameters.put("name", nameChannel);
@@ -643,7 +643,7 @@ public class ChannelsAPI extends HummAPI {
             }.getType();
 
 
-//            HummAPI.getInstance().updateUserToken();
+            HummAPI.getInstance().updateUserToken();
 
 //            Log.d("DEBUG", token);
             Reader reader = HttpURLConnectionHelper.deleteHttpConnection(endpoint + "/channels/" + idChannel , null, token, DEBUG);
@@ -718,7 +718,7 @@ public class ChannelsAPI extends HummAPI {
             }.getType();
 
 
-//            HummAPI.getInstance().updateUserToken();
+            HummAPI.getInstance().updateUserToken();
 
             Reader reader = HttpURLConnectionHelper.getHttpConnection(endpoint + "/channels/" + channelId + "/tracks", null, token, true);
 
