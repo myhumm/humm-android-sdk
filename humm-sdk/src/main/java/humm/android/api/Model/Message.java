@@ -233,6 +233,20 @@ public class Message extends Humm implements Parcelable {
         return null;
     }
 
+    public String getAttributesURL() {
+        if (this.attributes != null && this.attributes.get("url") != null) {
+            return (String) this.attributes.get("url");
+        }
+        return null;
+    }
+
+    public String getAttributesId() {
+        if (this.attributes != null && this.attributes.get("id") != null) {
+            return (String) this.attributes.get("id");
+        }
+        return null;
+    }
+
 
     @Override
     public int describeContents() {
